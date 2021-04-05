@@ -3,4 +3,5 @@ module.exports = {
   PORT: '6306',
   USER: 'monka',
   PASSWORD: 'zerTifyd5',
+  DB: 'monka',
 };

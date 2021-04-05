@@ -2,15 +2,20 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.json()); //Used to parse JSON bodies
-app.use(express.urlencoded({ extended: true })); //Parse URL-encoded bodies
+// used to parse JSON bodies
+app.use(express.json());
+
+// parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
 
 // simple route
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Smart Home App API!' });
 });
 
+require('./app/routes/user.routes.js')(app);
+
 // set port, listen for requests
-app.listen(3000, () => {
-  console.log('Server is running on port 3000.');
+app.listen(3333, () => {
+  console.log('Server is running on port 3333.');
 });
