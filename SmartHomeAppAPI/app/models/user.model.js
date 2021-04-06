@@ -1,6 +1,6 @@
 const sql = require('./db.js');
 
-// constructor
+// Constructor
 const User = function (user) {
   this.user_firstname = user.user_firstname;
   this.user_lastname = user.user_lastname;
@@ -12,12 +12,12 @@ const User = function (user) {
 User.create = (newUser, result) => {
   sql.query('INSERT INTO smarthomeapp_users SET ?', newUser, (err, res) => {
     if (err) {
-      console.log('error: ', err);
+      console.log('Error: ', err);
       result(err, null);
       return;
     }
 
-    console.log('created user: ', { id: res.insertId, ...newUser });
+    console.log('Created user: ', { id: res.insertId, ...newUser });
     result(null, { id: res.insertId, ...newUser });
   });
 };
