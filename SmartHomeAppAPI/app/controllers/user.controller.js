@@ -10,35 +10,26 @@ exports.create = async (req, res) => {
     });
   }
 
-  // Generate salt and hash password on seperate function calls
+  // Generate salt and hashed password
   const saltRounds = 10;
-  let hashed_password = 0;
-  let generated_salt = 0;
-  await bcrypt.genSalt(saltRounds, function (err, salt) {
-    generated_salt = salt;
-    console.log(salt);
-    bcrypt.hash(req.body.password, salt, function (err, hash) {
-      hashed_password = hash;
-      console.log(hash);
-    });
-  });
-  console.log(hashed_password);
-  console.log(generated_salt);
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
   // Create User
   const user = new User({
     user_firstname: req.body.firstname,
     user_lastname: req.body.lastname,
     user_email: req.body.email,
-    user_password: hashed_password,
-    user_salt: generated_salt,
+    user_password: hashedPassword,
+    user_salt: salt,
   });
 
   // Save User
   User.create(user, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message: err.message || 'Some error occurred while creating the User.',
       });
-    else res.send(data);
+    } else res.send(data);
   });
 };
