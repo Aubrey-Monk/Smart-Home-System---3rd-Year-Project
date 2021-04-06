@@ -33,3 +33,15 @@ exports.create = async (req, res) => {
     } else res.send(data);
   });
 };
+
+// Login
+// exports.login = (req, res) => {
+//   User.authenticate(req.body.email, req.body.password, (err, data) => {
+//     if (err) {
+//       res.status(400).send({
+//         message: 'Invalid email/password given',
+//       });
+//     } else {
+//     }
+//   });
+// };
