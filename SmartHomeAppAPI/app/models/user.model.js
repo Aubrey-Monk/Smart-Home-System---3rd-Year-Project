@@ -20,7 +20,7 @@ class User {
       }
 
       console.log('Created user: ', { id: res.insertId, ...newUser });
-      result(null, { id: res.insertId, ...newUser });
+      result(null, { id: res.insertId });
     });
   }
 
