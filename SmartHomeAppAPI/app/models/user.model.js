@@ -85,6 +85,26 @@ class User {
       console.log(err);
     }
   }
+
+  // delete token from database
+  static deleteToken(token, result) {
+    try {
+      sql.query(
+        `UPDATE smarthomeapp_users SET user_token=null WHERE user_token='${token}'`,
+        (err, res) => {
+          console.log(`changed ${res.changedRows} rows`);
+          if (err) {
+            result(true);
+          } else if (res.changedRows === 0) {
+            result(true);
+          }
+          result(null);
+        },
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }
 
 module.exports = User;

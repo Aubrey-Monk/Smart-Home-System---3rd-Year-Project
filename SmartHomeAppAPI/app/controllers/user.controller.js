@@ -69,3 +69,19 @@ exports.login = (req, res) => {
     }
   });
 };
+
+// logout - currently a bug where if you log out and its not authorized then try to log out again with authorization the token is still deleted but the server breaks
+exports.logout = (req, res) => {
+  const token = req.get('X-Authorization');
+  User.deleteToken(token, (err) => {
+    if (err) {
+      res.status(401).send({
+        message: err.message || 'Unauthorised',
+      });
+    } else {
+      res.status(200).send({
+        message: 'OK',
+      });
+    }
+  });
+};
