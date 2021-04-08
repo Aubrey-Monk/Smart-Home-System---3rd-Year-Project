@@ -46,15 +46,23 @@ exports.login = (req, res) => {
   User.auth(email, password, (err, id) => {
     if (err) {
       res.status(400).send({
-        message: err.message || 'Server Error',
+        message: err.message || 'Invalid email/password supplied',
       });
     } else {
       User.getToken(id, (_err, getToken) => {
-        if (getToken) {
+        if (_err) {
+          res.status(500).send({
+            message: err.message || 'Server Error',
+          });
+        } else if (getToken) {
           res.send({ id, token: getToken });
         } else {
           User.setToken(id, (__err, setToken) => {
-            res.send({ id, token: setToken });
+            if (__err) {
+              res.status(500).send({
+                message: err.message || 'Server Error',
+              });
+            } else res.send({ id, token: setToken });
           });
         }
       });
