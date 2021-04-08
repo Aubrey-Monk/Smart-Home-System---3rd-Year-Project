@@ -4,5 +4,5 @@ module.exports = (app) => {
   // Create new User
   app.post('/user', users.create);
   // Login
-  // app.post('/user/login', users.login);
+  app.post('/user/login', users.login);
 };

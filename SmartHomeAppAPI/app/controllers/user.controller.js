@@ -6,7 +6,7 @@ exports.create = async (req, res) => {
   // Validate request
   if (!req.body) {
     res.status(400).send({
-      message: 'Content can not be empty!',
+      message: 'Bad Request',
     });
   }
 
@@ -28,20 +28,31 @@ exports.create = async (req, res) => {
   User.create(user, (err, data) => {
     if (err) {
       res.status(500).send({
-        message: err.message || 'Some error occurred while creating the User.',
+        message: err.message || 'Server Error',
       });
     } else res.send(data);
   });
 };
 
 // Login
-// exports.login = (req, res) => {
-//   User.authenticate(req.body.email, req.body.password, (err, data) => {
-//     if (err) {
-//       res.status(400).send({
-//         message: 'Invalid email/password given',
-//       });
-//     } else {
-//     }
-//   });
-// };
+exports.login = (req, res) => {
+  const { email } = req.body;
+  const { password } = req.body;
+  User.auth(email, password, (err, id) => {
+    if (err) {
+      res.status(400).send({
+        message: err.message || 'Server Error',
+      });
+    } else {
+      User.getToken(id, (_err, getToken) => {
+        if (getToken) {
+          res.send({ id, token: getToken });
+        } else {
+          User.setToken(id, (__err, setToken) => {
+            res.send({ id, token: setToken });
+          });
+        }
+      });
+    }
+  });
+};

@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const sql = require('./db.js');
 
 // Constructor
@@ -24,9 +25,9 @@ class User {
     });
   }
 
-  static authenticate(email, password, result) {
+  static auth(email, password, result) {
     sql.query(
-      `SELECT user_id, user_password, user_salt FROM smarthomeapp_users WHERE user_email = '${email}'`,
+      `SELECT user_id, user_password FROM smarthomeapp_users WHERE user_email = '${email}'`,
       (err, res) => {
         if (err) {
           console.log('error: ', err);
@@ -40,20 +41,47 @@ class User {
             result(false, res[0].user_id);
             return;
           }
-          result(true); // failed password check
+          result(true); // failed password comparison
           return;
         }
 
-        // not found User
+        // no User found
         result({ kind: 'not_found' }, null);
-        // eslint-disable-next-line comma-dangle
-      }
+      },
     );
   }
 
-  // static getToken(id, result){
+  static getToken(id, result) {
+    try {
+      sql.query(
+        `SELECT user_token FROM smarthomeapp_users WHERE user_id=${id}`,
+        (err, res) => {
+          if (result.length === 1 && result[0].token) {
+            result(null, res[0].token);
+            return;
+          }
+          result(null, null);
+        },
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
-  // }
+  static async setToken(id, result) {
+    try {
+      const token = crypto.randomBytes(16).toString('hex');
+      console.log(token);
+      sql.query(
+        'UPDATE smarthomeapp_users SET user_token=? WHERE user_id=?',
+        [token, id],
+        (err) => result(err, token),
+      );
+      console.log('fluffy');
+    } catch (err) {
+      console.log('Error');
+    }
+  }
 }
 
 module.exports = User;
