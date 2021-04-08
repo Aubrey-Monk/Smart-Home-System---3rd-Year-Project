@@ -2,16 +2,16 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const sql = require('./db.js');
 
-// Constructor
+// constructor
 class User {
   constructor(user) {
     this.user_firstname = user.user_firstname;
     this.user_lastname = user.user_lastname;
     this.user_email = user.user_email;
     this.user_password = user.user_password;
-    this.user_salt = user.user_salt;
   }
 
+  // create user
   static create(newUser, result) {
     sql.query('INSERT INTO smarthomeapp_users SET ?', newUser, (err, res) => {
       if (err) {
@@ -25,6 +25,7 @@ class User {
     });
   }
 
+  // authenticate user
   static auth(email, password, result) {
     sql.query(
       `SELECT user_id, user_password FROM smarthomeapp_users WHERE user_email = '${email}'`,
@@ -37,20 +38,22 @@ class User {
 
         if (res.length) {
           console.log('found user: ', res[0]);
+          // compare password hash with plaintext password
           if (bcrypt.compareSync(password, res[0].user_password)) {
             result(false, res[0].user_id);
             return;
           }
-          result(true); // failed password comparison
+          result(true);
           return;
         }
 
-        // no User found
+        // no user found with email
         result({ kind: 'not_found' }, null);
       },
     );
   }
 
+  // get token from database
   static getToken(id, result) {
     try {
       sql.query(
@@ -68,6 +71,7 @@ class User {
     }
   }
 
+  // create new token and insert into database
   static async setToken(id, result) {
     try {
       const token = crypto.randomBytes(16).toString('hex');
@@ -77,9 +81,8 @@ class User {
         [token, id],
         (err) => result(err, token),
       );
-      console.log('fluffy');
     } catch (err) {
-      console.log('Error');
+      console.log(err);
     }
   }
 }
