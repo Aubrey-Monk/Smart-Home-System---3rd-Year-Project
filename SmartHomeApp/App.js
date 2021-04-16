@@ -12,6 +12,7 @@ import {
 } from 'react-native-paper';
 import {createStackNavigator} from '@react-navigation/stack';
 import welcomeStackNavigator from './src/navigators/welcomeStackNavigator';
+import homeDrawerNavigator from './src/navigators/homeDrawerNavigator';
 import {Context} from './src/components/context';
 
 const Stack = createStackNavigator();
@@ -67,6 +68,11 @@ export default function Main() {
               name="welcomeStackNavigator"
               options={{headerShown: false}}
               component={welcomeStackNavigator}
+            />
+            <Stack.Screen
+              name="homeDrawerNavigator"
+              options={{headerShown: false}}
+              component={homeDrawerNavigator}
             />
           </Stack.Navigator>
         </NavigationContainer>
