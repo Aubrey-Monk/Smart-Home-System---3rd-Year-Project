@@ -11,6 +11,10 @@ module.exports = {
     modules: true,
   },
 
+  env: {
+    browser: true,
+  },
+
   rules: {
     'prettier/prettier': [
       'error',
