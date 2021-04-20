@@ -13,6 +13,7 @@ import {
 import {createStackNavigator} from '@react-navigation/stack';
 import welcomeStackNavigator from './src/navigators/welcomeStackNavigator';
 import homeDrawerNavigator from './src/navigators/homeDrawerNavigator';
+import homeStackNavigator from './src/navigators/homeStackNavigator';
 import {Context} from './src/components/context';
 
 const Stack = createStackNavigator();
@@ -73,6 +74,11 @@ export default function Main() {
               name="homeDrawerNavigator"
               options={{headerShown: false}}
               component={homeDrawerNavigator}
+            />
+            <Stack.Screen
+              name="homeStackNavigator"
+              options={{headerShown: false}}
+              component={homeStackNavigator}
             />
           </Stack.Navigator>
         </NavigationContainer>

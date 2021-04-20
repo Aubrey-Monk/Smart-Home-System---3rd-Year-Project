@@ -3,25 +3,25 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {Text, Button} from 'react-native-paper';
 
-const HomeScreen = (props) => (
+const SecurityScreen = (props) => (
   <View>
     <Button
       role="button"
       mode="contained"
       onPress={() =>
         props.navigation.navigate('homeStackNavigator', {
-          screen: 'Security',
+          screen: 'Add Device',
         })
       }>
-      <Text>Security</Text>
+      <Text>Add Device</Text>
     </Button>
   </View>
 );
 
-HomeScreen.propTypes = {
+SecurityScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
 };
 
-export default HomeScreen;
+export default SecurityScreen;

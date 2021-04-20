@@ -4,7 +4,7 @@ import {Button, Text, TextInput} from 'react-native-paper';
 import Login from '../components/login';
 
 const LoginScreen = (props) => {
-  // hard coded login details for quick testing
+  // login details hard coded for rapid testing
   const [email, setEmail] = useState('aubrey.monk@mail.com');
   const [password, setPassword] = useState('password123');
   // const [email, setEmail] = useState('');
