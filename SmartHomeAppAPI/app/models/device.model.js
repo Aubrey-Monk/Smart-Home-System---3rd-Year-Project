@@ -26,6 +26,30 @@ class Device {
       },
     );
   }
+
+  // list devices
+  static list(type, id, result) {
+    sql.query(
+      'SELECT device_id, device_name, device_type, device_room FROM smarthomeapp_devices WHERE (device_type = ? AND devices_user_id = ?)',
+      [type, id],
+      (err, res) => {
+        if (err) {
+          console.log('error: ', err);
+          result(err, null);
+          return;
+        }
+
+        if (res.length) {
+          console.log('found devices: ', res);
+          result(false, res);
+          return;
+        }
+
+        // no devices found
+        result({ kind: 'not_found' }, null);
+      },
+    );
+  }
 }
 
 module.exports = Device;

@@ -26,3 +26,26 @@ exports.add = async (req, res) => {
     });
   }
 };
+
+// get list of devices
+exports.list = async (req, res) => {
+  const type = req.params.device_type;
+  const id = parseInt(req.params.usr_id, 10);
+  // validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: 'Bad Request',
+    });
+  } else {
+    console.log(type);
+    console.log(id);
+    // add device
+    Device.list(type, id, (err, data) => {
+      if (err) {
+        res.status(500).send({
+          message: err.message || 'Server Error',
+        });
+      } else res.status(200).send(data);
+    });
+  }
+};
