@@ -15,7 +15,7 @@ const SecurityScreen = (props) => {
     setDeviceList(data);
   }, []);
 
-  const mqtt = () => {
+  const mqtt = (serialNumber) => {
     // Set up an in-memory alternative to global localStorage
     const myStorage = {
       setItem: (key, item) => {
@@ -30,7 +30,7 @@ const SecurityScreen = (props) => {
     // Create a client instance
     const client = new Client({
       uri: 'ws://test.mosquitto.org:8080/ws',
-      clientId: '18026172',
+      clientId: '18026172-publish',
       storage: myStorage,
     });
 
@@ -50,11 +50,11 @@ const SecurityScreen = (props) => {
       .then(() => {
         // Once a connection has been made, make a subscription and send a message.
         console.log('onConnect');
-        return client.subscribe('world');
+        return client.subscribe('18026172/servo');
       })
       .then(() => {
-        const message = new Message('hello');
-        message.destinationName = 'world';
+        const message = new Message(serialNumber);
+        message.destinationName = '18026172/servo';
         client.send(message);
       })
       .catch((responseObject) => {
@@ -82,13 +82,12 @@ const SecurityScreen = (props) => {
         data={deviceList}
         renderItem={({item}) => (
           <View>
-            <Text>{item.device_name.toString()}</Text>
             <Button role="button" mode="contained" onPress={() => mqtt()}>
-              <Text>Security</Text>
+              <Text>{item.serial_number.toString()}</Text>
             </Button>
           </View>
         )}
-        keyExtractor={(item) => item.device_id.toString()}
+        keyExtractor={(item) => item.serial_number.toString()}
       />
       <Button
         role="button"

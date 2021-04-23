@@ -9,6 +9,7 @@ const AddDevice = async (props, params) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
+      serial_number: params.serial_number,
       device_name: params.device_name,
       device_type: params.device_type,
       device_room: params.device_room,
