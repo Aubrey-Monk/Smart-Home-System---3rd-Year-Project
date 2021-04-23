@@ -7,27 +7,47 @@ import {
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
+import {useTheme} from 'react-native-paper';
 import HomeScreen from '../screens/homeScreen';
 import Logout from '../components/logout';
 
 const Drawer = createDrawerNavigator();
 
-const HomeNavigator = () => (
-  <Drawer.Navigator
-    drawerStyle={{
-      backgroundColor: '#c6cbef',
-      width: 240,
-    }}
-    initialRouteName="Home"
-    drawerContent={(props) => (
-      <DrawerContentScrollView {...props}>
-        <DrawerItemList {...props} />
-        <DrawerItem label="Logout" onPress={() => Logout(props)} />
-      </DrawerContentScrollView>
-    )}>
-    <Drawer.Screen name="Home" component={HomeScreen} />
-  </Drawer.Navigator>
-);
+const HomeNavigator = () => {
+  const {colors} = useTheme();
+  return (
+    <Drawer.Navigator
+      drawerStyle={{
+        backgroundColor: colors.background,
+        width: 240,
+      }}
+      drawerContentOptions={{
+        activeTintColor: 'black',
+        activeBackgroundColor: colors.primary,
+      }}
+      initialRouteName="Home"
+      drawerContent={(props) => (
+        <DrawerContentScrollView {...props}>
+          <DrawerItemList {...props} />
+          <DrawerItem
+            inactiveBackgroundColor={colors.primary}
+            inactiveTintColor="black"
+            label="Logout"
+            onPress={() => Logout(props)}
+          />
+        </DrawerContentScrollView>
+      )}>
+      <Drawer.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerShown: true,
+          headerTitleAlign: 'center',
+        }}
+      />
+    </Drawer.Navigator>
+  );
+};
 
 HomeNavigator.propTypes = {
   navigation: PropTypes.shape({
