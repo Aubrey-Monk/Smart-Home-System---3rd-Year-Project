@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import Login from '../components/login';
+import globalStyle from '../styles/globalStyle';
 
 const LoginScreen = (props) => {
   // login details hard coded for rapid testing
@@ -19,8 +20,8 @@ const LoginScreen = (props) => {
   };
 
   return (
-    <View>
-      <View>
+    <View style={globalStyle.flexContainer}>
+      <View style={globalStyle.textInputView}>
         <TextInput
           role="textbox"
           type="outlined"
@@ -39,8 +40,13 @@ const LoginScreen = (props) => {
           value={password}
         />
       </View>
-      <View>
-        <Button role="button" mode="contained" onPress={() => submit()}>
+      <View style={globalStyle.submitButtonView}>
+        <Button
+          role="button"
+          mode="contained"
+          contentStyle={globalStyle.buttonContent}
+          style={globalStyle.submitButton}
+          onPress={() => submit()}>
           <Text>Login</Text>
         </Button>
       </View>

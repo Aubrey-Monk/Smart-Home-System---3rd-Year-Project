@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import Signup from '../components/singup';
+import globalStyle from '../styles/globalStyle';
 
 const SignupScreen = (props) => {
   const [firstName, setFirstName] = useState('');
@@ -21,8 +22,8 @@ const SignupScreen = (props) => {
   };
 
   return (
-    <View>
-      <View>
+    <View style={globalStyle.flexContainer}>
+      <View style={globalStyle.textInputView}>
         <TextInput
           role="textbox"
           type="outlined"
@@ -57,8 +58,13 @@ const SignupScreen = (props) => {
           value={password}
         />
       </View>
-      <View>
-        <Button role="button" mode="contained" onPress={() => submit()}>
+      <View style={globalStyle.submitButtonView}>
+        <Button
+          role="button"
+          mode="contained"
+          contentStyle={globalStyle.buttonContent}
+          style={globalStyle.submitButton}
+          onPress={() => submit()}>
           <Text>Create Account</Text>
         </Button>
       </View>
