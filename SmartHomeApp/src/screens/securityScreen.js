@@ -82,7 +82,10 @@ const SecurityScreen = (props) => {
         data={deviceList}
         renderItem={({item}) => (
           <View>
-            <Button role="button" mode="contained" onPress={() => mqtt()}>
+            <Button
+              role="button"
+              mode="contained"
+              onPress={() => mqtt(item.serial_number.toString())}>
               <Text>{item.serial_number.toString()}</Text>
             </Button>
           </View>
