@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {Text, Button} from 'react-native-paper';
-import {Client, Message} from 'react-native-paho-mqtt';
+import {Message, Client} from 'react-native-paho-mqtt';
 import ListDevices from '../components/listDevices';
+import mqttClient from '../components/mqttClient';
 
 const SecurityScreen = (props) => {
   const [deviceList, setDeviceList] = useState([]);
@@ -15,7 +16,7 @@ const SecurityScreen = (props) => {
     setDeviceList(data);
   }, []);
 
-  const mqtt = (serialNumber) => {
+  const publish = (serialNumber, topic) => {
     // Set up an in-memory alternative to global localStorage
     const myStorage = {
       setItem: (key, item) => {
@@ -30,7 +31,7 @@ const SecurityScreen = (props) => {
     // Create a client instance
     const client = new Client({
       uri: 'ws://test.mosquitto.org:8080/ws',
-      clientId: '18026172-publish',
+      clientId: '18026172_APP_Client',
       storage: myStorage,
     });
 
@@ -44,17 +45,11 @@ const SecurityScreen = (props) => {
       console.log(message.payloadString);
     });
 
-    // connect the client
     client
       .connect()
       .then(() => {
-        // Once a connection has been made, make a subscription and send a message.
-        console.log('onConnect');
-        return client.subscribe('18026172/servo');
-      })
-      .then(() => {
         const message = new Message(serialNumber);
-        message.destinationName = '18026172/servo';
+        message.destinationName = topic;
         client.send(message);
       })
       .catch((responseObject) => {
@@ -74,7 +69,7 @@ const SecurityScreen = (props) => {
     return unsubscribe;
   }, [getDeviceList, navigation]);
 
-  console.log(deviceList);
+  // console.log(deviceList);
 
   return (
     <View>
@@ -85,8 +80,20 @@ const SecurityScreen = (props) => {
             <Button
               role="button"
               mode="contained"
-              onPress={() => mqtt(item.serial_number.toString())}>
+              onPress={() =>
+                publish(item.serial_number.toString(), '18026172/lock/lock')
+              }>
               <Text>{item.serial_number.toString()}</Text>
+              <Text> Lock</Text>
+            </Button>
+            <Button
+              role="button"
+              mode="contained"
+              onPress={() =>
+                publish(item.serial_number.toString(), '18026172/lock/unlock')
+              }>
+              <Text>{item.serial_number.toString()}</Text>
+              <Text> UnLock</Text>
             </Button>
           </View>
         )}
