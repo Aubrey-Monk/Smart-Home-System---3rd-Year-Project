@@ -3,58 +3,72 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {Text, Button} from 'react-native-paper';
-import MQTT from 'sp-react-native-mqtt';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import init from 'react_native_mqtt';
 import ListDevices from '../components/listDevices';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// import mqttClient from '../components/mqttClient';
 
 const SecurityScreen = (props) => {
   const {navigation} = props;
 
   const [deviceList, setDeviceList] = useState([]);
 
-  const sp = (serialNumber, topic) => {
-    /* create mqtt client */
-    MQTT.createClient({
-      uri: 'mqtt://test.mosquitto.org:1883',
-      clientId: 'your_client_id',
-    })
-      .then((client) => {
-        client.on('closed', () => {
-          // console.log('mqtt.event.closed');
-        });
+  const mqtt = async (topic, message) => {
+    init({
+      size: 10000,
+      storageBackend: AsyncStorage,
+      defaultExpires: 1000 * 3600 * 24,
+      enableCache: true,
+      reconnect: true,
+      sync: {},
+    });
 
-        client.on('error', (msg) => {
-          // console.log('mqtt.event.error', msg);
-        });
+    function onConnect() {
+      console.log('onConnect');
+      client.publish(topic, message, 0, false);
+    }
 
-        client.on('message', (msg) => {
-          // console.log('mqtt.event.message', msg);
-        });
+    function onConnectionLost(responseObject) {
+      if (responseObject.errorCode !== 0) {
+        console.log('onConnectionLost:' + responseObject.errorMessage);
+      }
+    }
 
-        client.on('connect', () => {
-          console.log('connected');
-          client.subscribe('/data', 0);
-          client.publish('/data', 'test', 0, false);
-        });
+    function onMessageArrived(message) {
+      console.log('onMessageArrived:' + message.payloadString);
+    }
 
-        client.connect();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    function onError(e) {
+      console.log('error');
+      console.log(e);
+    }
+
+    // eslint-disable-next-line no-undef
+    const client = new Paho.MQTT.Client(
+      'test.mosquitto.org',
+      8080,
+      '18026272_APP_Client',
+    );
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
+
+    client.connect({onSuccess: onConnect, onFailure: onError, useSSL: false});
   };
+
+  const checkLocks = useCallback(async (data) => {
+    let message = '';
+    Object.keys(data).forEach((key) => {
+      message = `${message + data[key].serial_number.toString()}-`;
+    });
+
+    mqtt('18026172/lock/check', message);
+  }, []);
 
   const getDeviceList = useCallback(async () => {
     const data = await ListDevices('Lock');
     setDeviceList(data);
-    const arr = [];
-    Object.keys(data).forEach((key) => {
-      arr.push(data[key]);
-      // console.log(data[key].serial_number);
-      // sp(data[key].serial_number, '18026172/lock/check');
-    });
-  }, []);
+    checkLocks(data);
+  }, [checkLocks]);
 
   // component load
   useEffect(() => {
@@ -78,7 +92,7 @@ const SecurityScreen = (props) => {
               role="button"
               mode="contained"
               onPress={() =>
-                sp(item.serial_number.toString(), '18026172/lock/lock')
+                mqtt('18026172/lock/lock', item.serial_number.toString())
               }>
               <Text>{item.serial_number.toString()}</Text>
               <Text> Lock</Text>
@@ -87,7 +101,7 @@ const SecurityScreen = (props) => {
               role="button"
               mode="contained"
               onPress={() =>
-                sp(item.serial_number.toString(), '18026172/lock/unlock')
+                mqtt('18026172/lock/unlock', item.serial_number.toString())
               }>
               <Text>{item.serial_number.toString()}</Text>
               <Text> UnLock</Text>
