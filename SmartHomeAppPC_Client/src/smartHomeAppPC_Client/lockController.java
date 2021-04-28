@@ -35,6 +35,26 @@ public class lockController {
 		}
 		return null;	
 	}
+	
+	public static void checkLock(Integer serial) {
+		RCServo lock = lockExists(serial);
+		if(lock == null) {
+			RCServo newLock = createLock(serial);
+			try {
+				System.out.println(newLock.getPosition());
+			} catch (PhidgetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else {
+			try {
+				System.out.println(lock.getPosition());
+			} catch (PhidgetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public static void lock(Integer serial) {
 		RCServo lock = lockExists(serial);

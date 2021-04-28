@@ -26,5 +26,8 @@ public class subscriberCallback implements MqttCallback {
 		if(topic.equals("18026172/lock/unlock")) {
 			lockController.unlock(Integer.parseInt(new String(message.getPayload())));
 		}
+		if(topic.equals("18026172/lock/check")) {
+			lockController.checkLock(Integer.parseInt(new String(message.getPayload())));
+		}
 	}
 }
