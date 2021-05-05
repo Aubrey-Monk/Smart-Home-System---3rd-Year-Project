@@ -7,6 +7,7 @@ class Device {
     this.device_name = device.device_name;
     this.device_type = device.device_type;
     this.device_room = device.device_room;
+    this.device_channel = device.device_channel;
     this.devices_user_id = device.devices_user_id;
   }
 
@@ -31,7 +32,7 @@ class Device {
   // list devices
   static list(type, id, result) {
     sql.query(
-      'SELECT serial_number, device_name, device_type, device_room FROM smarthomeapp_devices WHERE (device_type = ? AND devices_user_id = ?)',
+      'SELECT serial_number, device_name, device_type, device_channel, device_room FROM smarthomeapp_devices WHERE (device_type = ? AND devices_user_id = ?)',
       [type, id],
       (err, res) => {
         if (err) {

@@ -14,6 +14,7 @@ exports.add = async (req, res) => {
       device_name: req.body.device_name,
       device_type: req.body.device_type,
       device_room: req.body.device_room,
+      device_channel: req.body.device_channel,
       devices_user_id: req.body.user_id,
     });
 
