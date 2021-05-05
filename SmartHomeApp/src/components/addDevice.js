@@ -13,12 +13,14 @@ const AddDevice = async (props, params) => {
       device_name: params.device_name,
       device_type: params.device_type,
       device_room: params.device_room,
+      device_channel: params.device_channel,
       user_id: userId,
     }),
   })
     .then((response) => {
       if (response.status === 201) {
         ToastAndroid.show('Device Added', ToastAndroid.SHORT);
+        props.navigation.goBack();
       }
       if (response.status === 400) {
         throw new Error('Failed Validation.');

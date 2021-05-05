@@ -1,23 +1,29 @@
 import React, {useState} from 'react';
+import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import AddDevice from '../components/addDevice';
 
 const AddDeviceScreen = (props) => {
+  const {route} = props;
+  const {params} = route;
+  const {deviceType} = params;
+
   const [serialNumber, setSerialNumber] = useState('');
   const [deviceName, setDeviceName] = useState('');
-  const [deviceType, setDeviceType] = useState('Lock'); // hard coded for now, should come from parameters
   const [deviceRoom, setDeviceRoom] = useState('');
+  const [deviceChannel, setDeviceChannel] = useState('');
 
   const submit = () => {
-    const params = {
+    const deviceParams = {
       serial_number: parseInt(serialNumber, 10),
       device_name: deviceName,
       device_type: deviceType,
       device_room: deviceRoom,
+      device_channel: parseInt(deviceChannel, 10),
     };
 
-    AddDevice(props, params);
+    AddDevice(props, deviceParams);
   };
 
   return (
@@ -31,6 +37,16 @@ const AddDeviceScreen = (props) => {
           onChangeText={(value) => setSerialNumber(value)}
           value={serialNumber}
         />
+
+        <TextInput
+          role="textbox"
+          type="outlined"
+          label="Device Channel"
+          placeholder="Enter device channel"
+          onChangeText={(value) => setDeviceChannel(value)}
+          value={deviceChannel}
+        />
+
         <TextInput
           role="textbox"
           type="outlined"
@@ -55,6 +71,14 @@ const AddDeviceScreen = (props) => {
       </View>
     </View>
   );
+};
+
+AddDeviceScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      deviceType: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
 };
 
 export default AddDeviceScreen;

@@ -32,7 +32,7 @@ class Device {
   // list devices
   static list(type, id, result) {
     sql.query(
-      'SELECT serial_number, device_name, device_type, device_channel, device_room FROM smarthomeapp_devices WHERE (device_type = ? AND devices_user_id = ?)',
+      'SELECT serial_number, device_name, device_type, device_room, device_channel FROM smarthomeapp_devices WHERE (device_type = ? AND devices_user_id = ?)',
       [type, id],
       (err, res) => {
         if (err) {
