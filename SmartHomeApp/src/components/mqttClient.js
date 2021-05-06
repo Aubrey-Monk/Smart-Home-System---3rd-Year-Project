@@ -14,23 +14,19 @@ export default class MQTTConnection {
   constructor() {
     this.mqtt = null;
     this.QOS = 0;
-    this.RETAIN = true;
+    this.RETAIN = false;
   }
 
-  onConnectionLost = (res) => {
-    console.log('MQTT Connection Lost');
-    console.log(res);
+  onConnectionLost = () => {
+    // console.log('MQTT Connection Lost');
+    // console.log(res);
   };
 
-  onMessageArrived = (message) => {
-    console.log('MQTT Message arrived payloadString: ', message.payloadString);
-  };
-
-  onMessageDelivered = (message) => {
-    console.log(
-      'MQTT Message delivered payloadString: ',
-      message.payloadString,
-    );
+  onMessageDelivered = () => {
+    // console.log(
+    //   'MQTT Message delivered payloadString: ',
+    //   message.payloadString,
+    // );
   };
 
   onSuccess = () => {
@@ -43,7 +39,7 @@ export default class MQTTConnection {
 
   connect(host, port) {
     const clientID = uuid.v4();
-    console.log('clientID: ', clientID);
+    // console.log('clientID: ', clientID);
 
     // eslint-disable-next-line no-undef
     this.mqtt = new Paho.MQTT.Client(host, port, clientID);
@@ -71,9 +67,9 @@ export default class MQTTConnection {
     if (this.mqtt == null) {
       return;
     }
-    console.log(
-      `MQTT publish: topic: ${topic}, payload: ${payload} qos: ${this.QOS} retain: ${this.RETAIN}`,
-    );
+    // console.log(
+    //   `MQTT publish: topic: ${topic}, payload: ${payload} qos: ${this.QOS} retain: ${this.RETAIN}`,
+    // );
     this.mqtt.publish(topic, payload, this.QOS, this.RETAIN);
   }
 
@@ -81,7 +77,7 @@ export default class MQTTConnection {
     if (this.mqtt == null) {
       return;
     }
-    console.log('MQTT subscribe to topic: ', topic);
+    // console.log('MQTT subscribe to topic: ', topic);
     this.mqtt.subscribe(topic, this.QOS);
   }
 
@@ -89,7 +85,7 @@ export default class MQTTConnection {
     if (this.mqtt == null) {
       return;
     }
-    console.log('MQTT un-subscribe to topic: ', topic);
+    // console.log('MQTT un-subscribe to topic: ', topic);
     this.mqtt.unsubscribe(topic);
   }
 
@@ -101,5 +97,5 @@ export default class MQTTConnection {
 
 MQTTConnection.prototype.onConnect = null;
 // MQTTConnection.prototype.onConnectionLost = null;
-// MQTTConnection.prototype.onMessageArrived = null;
+MQTTConnection.prototype.onMessageArrived = null;
 // MQTTConnection.prototype.onMessageDelivered = null;

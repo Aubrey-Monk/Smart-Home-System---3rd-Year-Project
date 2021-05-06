@@ -13,6 +13,8 @@ public class mqttClient {
     	try 
     	{
     		mqttClient = new MqttClient(brokerUrl, clientId);
+    		mqttClient.setCallback(new subscriberCallback(mqttClient));
+	        mqttClient.connect();
         } 
     	catch (MqttException e) 
     	{
@@ -24,13 +26,24 @@ public class mqttClient {
     {
         try 
         {
-	        mqttClient.setCallback(new subscriberCallback());
-	        mqttClient.connect();
 	        for (int i = 0; i < topics.length; i++) {
 	        	  mqttClient.subscribe(topics[i]);
 	        	  System.out.println("Subscribed to topic: " + topics[i]);
 	        }
 	        
+        } 
+        catch (MqttException e) 
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public void publish(String topic, String message) 
+    {
+        try 
+        {
+	        MqttMessage payload = new MqttMessage(message.getBytes());
+	        mqttClient.publish(topic, payload);
         } 
         catch (MqttException e) 
         {
