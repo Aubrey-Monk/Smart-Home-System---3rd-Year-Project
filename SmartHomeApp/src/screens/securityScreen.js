@@ -14,6 +14,18 @@ const SecurityScreen = (props) => {
   const [mqttClient] = useState(new MQTTConnection());
   const [lockedDoors, setLockedDoors] = useState([]);
 
+  const lockUnlock = (serialNumber) => {
+    if (lockedDoors.indexOf(serialNumber) > -1) {
+      console.log('unlocking');
+      mqttClient.publish('18026172/lock/unlock', serialNumber.toString());
+      setLockedDoors(lockedDoors.filter((item) => item !== serialNumber));
+    } else {
+      console.log('locking');
+      mqttClient.publish('18026172/lock/lock', serialNumber.toString());
+      setLockedDoors([...lockedDoors, serialNumber]);
+    }
+  };
+
   const checkLocks = useCallback(
     async (data) => {
       let message = '';
@@ -21,26 +33,28 @@ const SecurityScreen = (props) => {
         message = `${message + data[key].serial_number.toString()}-`;
       });
 
-      mqttClient.publish('18026172/lock/check', message);
       const onMessageArrived = (_message) => {
         console.log(
           'MQTT Message arrived payloadString: ',
           _message.payloadString,
         );
         const positions = _message.payloadString.split('-');
+        const lockedSerialArray = [];
         Object.keys(data).forEach((key) => {
           // message = `${message + data[key].serial_number.toString()}-`;
           // console.log(positions[key]);
           // console.log(data[key].serial_number.toString());
           if (positions[key] === '180.0') {
-            setLockedDoors(lockedDoors.concat(data[key].serial_number));
+            lockedSerialArray.push(data[key].serial_number);
           }
         });
+        setLockedDoors(lockedSerialArray);
       };
       mqttClient.onMessageArrived = onMessageArrived;
       mqttClient.subscribe('18026172/lock/checked');
+      mqttClient.publish('18026172/lock/check', message);
     },
-    [mqttClient, lockedDoors],
+    [mqttClient],
   );
 
   const getDeviceList = useCallback(async () => {
@@ -83,38 +97,17 @@ const SecurityScreen = (props) => {
         data={deviceList}
         renderItem={({item}) => (
           <View>
-            <Button
-              role="button"
-              mode="contained"
-              onPress={() =>
-                mqttClient.publish(
-                  '18026172/lock/lock',
-                  item.serial_number.toString(),
-                )
-              }>
-              <Text>{item.serial_number.toString()}</Text>
-              <Text> Lock</Text>
-            </Button>
-            <Button
-              role="button"
-              mode="contained"
-              onPress={() =>
-                mqttClient.publish(
-                  '18026172/lock/unlock',
-                  item.serial_number.toString(),
-                )
-              }>
-              <Text>{item.serial_number.toString()}</Text>
-              <Text> UnLock</Text>
-            </Button>
+            <Text>{item.serial_number.toString()}</Text>
+            <Text>{item.device_name.toString()}</Text>
             <Icon
               name={
                 lockedDoors.indexOf(item.serial_number) > -1
-                  ? 'heart'
-                  : 'heart-outline'
+                  ? 'lock'
+                  : 'lock-open-variant'
               }
               size={40}
               color="red"
+              onPress={() => lockUnlock(item.serial_number)}
             />
           </View>
         )}
