@@ -1,8 +1,9 @@
 package smartHomeAppPC_Client;
 
+import com.phidget22.*;
+
 import java.util.ArrayList;
 import java.util.List;
-import com.phidget22.*;
 
 public class lockController {
 	

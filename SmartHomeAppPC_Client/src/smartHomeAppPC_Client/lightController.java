@@ -9,10 +9,10 @@ public class lightController {
 	
 	private static List<DigitalOutput> lightList = new ArrayList<DigitalOutput>();
 	
-	public static DigitalOutput lightExists(Integer channel) { // check if a light (of a specific channel) already exists
+	public static DigitalOutput lightExists(Integer serial, Integer channel) { // check if a light (of a specific channel) already exists
 		for (int i = 0; i < lightList.size(); i++) {
             try {
-				if(lightList.get(i).getChannel() == channel) {
+				if(lightList.get(i).getDeviceSerialNumber() == serial && lightList.get(i).getChannel() == channel) {
 					return lightList.get(i);
 				}
 			} catch (PhidgetException e) {
@@ -41,7 +41,7 @@ public class lightController {
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		
-		DigitalOutput light = lightExists(channel);
+		DigitalOutput light = lightExists(serialNumber, channel);
 		if(light == null) {
 			DigitalOutput newLight = createLight(serialNumber, channel);
 			try {
@@ -65,7 +65,7 @@ public class lightController {
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		
-		DigitalOutput light = lightExists(channel);
+		DigitalOutput light = lightExists(serialNumber, channel);
 		if(light == null) {
 			DigitalOutput newLight = createLight(serialNumber, channel);
 			try {
@@ -90,7 +90,7 @@ public class lightController {
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		
-		DigitalOutput light = lightExists(channel);
+		DigitalOutput light = lightExists(serialNumber, channel);
 		if(light == null) {
 			DigitalOutput newLight = createLight(serialNumber, channel);
 			try {

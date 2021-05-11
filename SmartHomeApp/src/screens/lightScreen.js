@@ -21,7 +21,7 @@ const LightScreen = (props) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       const onConnect = async () => {
-        // console.log('MQTT Connected');
+        console.log('MQTT Connected');
         await getDeviceList();
       };
 
@@ -38,6 +38,7 @@ const LightScreen = (props) => {
     () =>
       // on un-mount
       () => {
+        console.log('MQTT Disconnected');
         mqttClient.close();
       },
     [mqttClient],
