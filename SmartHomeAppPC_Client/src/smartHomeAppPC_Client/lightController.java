@@ -23,18 +23,42 @@ public class lightController {
 		return null;
 	}
 	
-	public static DigitalOutput createInterface(Integer serial, Integer channel) {
+	public static DigitalOutput createLight(Integer serial, Integer channel) {
 		try {
-			DigitalOutput phidgetInterface = new DigitalOutput();
-			phidgetInterface.setDeviceSerialNumber(serial);
-			phidgetInterface.setChannel(channel);
-			lightList.add(phidgetInterface);
-			return phidgetInterface;
+			DigitalOutput light = new DigitalOutput();
+			light.setDeviceSerialNumber(serial);
+			light.setChannel(channel);
+			lightList.add(light);
+			return light;
 		} catch (PhidgetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;	
+	}
+	
+	public static boolean checkLight(String serialChannel) {
+		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
+		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
+		
+		DigitalOutput light = lightExists(channel);
+		if(light == null) {
+			DigitalOutput newLight = createLight(serialNumber, channel);
+			try {
+				return(newLight.getState());
+			} catch (PhidgetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else {
+			try {
+				return(light.getState());
+			} catch (PhidgetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 	
 	public static void on(String serialChannel) {
@@ -43,7 +67,7 @@ public class lightController {
 		
 		DigitalOutput light = lightExists(channel);
 		if(light == null) {
-			DigitalOutput newLight = createInterface(serialNumber, channel);
+			DigitalOutput newLight = createLight(serialNumber, channel);
 			try {
 				newLight.open(5000);
 				newLight.setDutyCycle(1);
@@ -53,7 +77,7 @@ public class lightController {
 			}
 		}else {
 			try {
-				light.open(5000);
+				// light.open(5000);
 				light.setDutyCycle(1);
 			} catch (PhidgetException e) {
 				// TODO Auto-generated catch block
@@ -69,16 +93,16 @@ public class lightController {
 		
 		DigitalOutput light = lightExists(channel);
 		if(light == null) {
-			DigitalOutput newLight = createInterface(serialNumber, channel);
+			DigitalOutput newLight = createLight(serialNumber, channel);
 			try {
-				newLight.close();
+				newLight.setDutyCycle(0);
 			} catch (PhidgetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else {
 			try {
-				light.close();
+				light.setDutyCycle(0);
 			} catch (PhidgetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

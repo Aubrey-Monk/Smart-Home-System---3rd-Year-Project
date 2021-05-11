@@ -52,5 +52,14 @@ public class subscriberCallback implements MqttCallback {
 		if(topic.equals("18026172/light/off")) {
 			lightController.off(new String(message.getPayload()));
 		}
+		if(topic.equals("18026172/light/check")) {
+			String[] serialChannels = new String(message.getPayload()).split("-");
+			String states = "";
+			for (int i = 0; i < serialChannels.length; i++) {		
+				states += Boolean.toString(lightController.checkLight(serialChannels[i]))+"-";
+	        }
+			MqttMessage payload = new MqttMessage(states.getBytes());
+			mqttClient.publish("18026172/light/checked", payload);
+		}
 	}
 }
