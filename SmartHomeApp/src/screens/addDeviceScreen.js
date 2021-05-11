@@ -16,7 +16,7 @@ const AddDeviceScreen = (props) => {
 
   const submit = () => {
     const deviceParams = {
-      serial_number: parseInt(serialNumber, 10),
+      device_serial_number: parseInt(serialNumber, 10),
       device_name: deviceName,
       device_type: deviceType,
       device_room: deviceRoom,

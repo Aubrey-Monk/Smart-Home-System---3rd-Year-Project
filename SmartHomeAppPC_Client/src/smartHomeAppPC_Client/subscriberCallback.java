@@ -1,8 +1,6 @@
 package smartHomeAppPC_Client;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.paho.client.mqttv3.*;
 
@@ -36,29 +34,23 @@ public class subscriberCallback implements MqttCallback {
 		}
 		if(topic.equals("18026172/lock/check")) {
 			String[] serials = new String(message.getPayload()).split("-");
-			// List<String> positions = new ArrayList<String>();
-			String pos = "";
+			String positions = "";
 			for (int i = 0; i < serials.length; i++) {		
-				// System.out.println(String.valueOf(lockController.checkLock(Integer.parseInt(serials[i]))));
 				if(lockController.checkLock(Integer.parseInt(serials[i])) == 33.1578947368421) {
 					lockController.lock(Integer.parseInt(serials[i]));
-					// positions.add(String.valueOf(180.0));
-					pos += String.valueOf(180.0)+"-";
+					positions += String.valueOf(180.0)+"-";
 				}else {
-					// positions.add(String.valueOf(lockController.checkLock(Integer.parseInt(serials[i]))));
-					pos += String.valueOf(lockController.checkLock(Integer.parseInt(serials[i])))+"-";
+					positions += String.valueOf(lockController.checkLock(Integer.parseInt(serials[i])))+"-";
 				}
 	        }
-//			for (int i = 0; i < positions.size(); i++) {
-//				System.out.println(positions.get(i));
-//				mqttClient client = new mqttClient();
-//				client.publish("18026172/lock/checked", );
-//			}
-			// mqttClient client = new mqttClient();
-			MqttMessage payload = new MqttMessage(pos.getBytes());
+			MqttMessage payload = new MqttMessage(positions.getBytes());
 			mqttClient.publish("18026172/lock/checked", payload);
-			
-			
+		}
+		if(topic.equals("18026172/light/on")) {
+			lightController.on(new String(message.getPayload()));
+		}
+		if(topic.equals("18026172/light/off")) {
+			lightController.off(new String(message.getPayload()));
 		}
 	}
 }

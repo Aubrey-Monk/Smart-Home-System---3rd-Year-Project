@@ -10,7 +10,7 @@ exports.add = async (req, res) => {
   } else {
     // create device
     const device = new Device({
-      serial_number: req.body.serial_number,
+      device_serial_number: req.body.device_serial_number,
       device_name: req.body.device_name,
       device_type: req.body.device_type,
       device_room: req.body.device_room,

@@ -16,11 +16,11 @@ const SecurityScreen = (props) => {
 
   const lockUnlock = (serialNumber) => {
     if (lockedDoors.indexOf(serialNumber) > -1) {
-      console.log('unlocking');
+      // console.log('unlocking');
       mqttClient.publish('18026172/lock/unlock', serialNumber.toString());
       setLockedDoors(lockedDoors.filter((item) => item !== serialNumber));
     } else {
-      console.log('locking');
+      // console.log('locking');
       mqttClient.publish('18026172/lock/lock', serialNumber.toString());
       setLockedDoors([...lockedDoors, serialNumber]);
     }
@@ -89,7 +89,7 @@ const SecurityScreen = (props) => {
     [mqttClient],
   );
 
-  console.log(lockedDoors);
+  // console.log(lockedDoors);
 
   return (
     <View>
@@ -97,21 +97,21 @@ const SecurityScreen = (props) => {
         data={deviceList}
         renderItem={({item}) => (
           <View>
-            <Text>{item.serial_number.toString()}</Text>
+            <Text>{item.device_serial_number.toString()}</Text>
             <Text>{item.device_name.toString()}</Text>
             <Icon
               name={
-                lockedDoors.indexOf(item.serial_number) > -1
+                lockedDoors.indexOf(item.device_serial_number) > -1
                   ? 'lock'
                   : 'lock-open-variant'
               }
               size={40}
               color="red"
-              onPress={() => lockUnlock(item.serial_number)}
+              onPress={() => lockUnlock(item.device_serial_number)}
             />
           </View>
         )}
-        keyExtractor={(item) => item.serial_number.toString()}
+        keyExtractor={(item) => item.device_id.toString()}
       />
       <Button
         role="button"

@@ -3,7 +3,7 @@ const sql = require('./db.js');
 // constructor
 class Device {
   constructor(device) {
-    this.serial_number = device.serial_number;
+    this.device_serial_number = device.device_serial_number;
     this.device_name = device.device_name;
     this.device_type = device.device_type;
     this.device_room = device.device_room;
@@ -24,7 +24,7 @@ class Device {
         }
 
         console.log('Added device: ', { ...newDevice });
-        result(null, { serial_number: res.serial_number });
+        result(null, { device_serial_number: res.device_serial_number });
       },
     );
   }
@@ -32,7 +32,7 @@ class Device {
   // list devices
   static list(type, id, result) {
     sql.query(
-      'SELECT serial_number, device_name, device_type, device_room, device_channel FROM smarthomeapp_devices WHERE (device_type = ? AND devices_user_id = ?)',
+      'SELECT device_id, device_serial_number, device_name, device_type, device_room, device_channel FROM smarthomeapp_devices WHERE (device_type = ? AND devices_user_id = ?)',
       [type, id],
       (err, res) => {
         if (err) {
