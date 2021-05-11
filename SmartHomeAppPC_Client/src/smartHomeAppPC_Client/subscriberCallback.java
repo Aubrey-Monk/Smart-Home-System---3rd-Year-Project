@@ -7,8 +7,10 @@ import org.eclipse.paho.client.mqttv3.*;
 public class subscriberCallback implements MqttCallback {
 	MqttClient mqttClient;
 	
+	// constructor
 	public subscriberCallback(MqttClient mqttClient) {
 		// TODO Auto-generated constructor stub
+		// get instance of client so it can be used for publishing
 		this.mqttClient = mqttClient;
 	}
 
@@ -19,12 +21,15 @@ public class subscriberCallback implements MqttCallback {
 	public void deliveryComplete(IMqttDeliveryToken arg0) {}
 
 	@Override
-	public void messageArrived(String topic, MqttMessage message) throws Exception {
+	public void messageArrived(String topic, MqttMessage message) throws Exception { // whenever a new MQTT message arrives on any of the subscribed topics
+		// log message ion console
 		String time = new Timestamp(System.currentTimeMillis()).toString();
 		System.out.println("Time:\t" +time +
                 "  Topic:\t" + topic +
                 "  Message:\t" + new String(message.getPayload()) +
                 "  QoS:\t" + message.getQos());
+		
+		// for locks
 		
 		if(topic.equals("18026172/lock/lock")) {
 			lockController.lock(Integer.parseInt(new String(message.getPayload())));
@@ -46,6 +51,9 @@ public class subscriberCallback implements MqttCallback {
 			MqttMessage payload = new MqttMessage(positions.getBytes());
 			mqttClient.publish("18026172/lock/checked", payload);
 		}
+		
+		// for lights
+		
 		if(topic.equals("18026172/light/on")) {
 			lightController.on(new String(message.getPayload()));
 		}

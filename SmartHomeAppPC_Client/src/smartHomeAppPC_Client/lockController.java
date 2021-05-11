@@ -8,7 +8,7 @@ public class lockController {
 	
 	private static List<RCServo> lockList = new ArrayList<RCServo>();
 	
-	public static RCServo lockExists(Integer serial) {
+	public static RCServo lockExists(Integer serial) { // check if a lock (of a specific serial number) already exists in the list
 		for (int i = 0; i < lockList.size(); i++) {
             try {
 				if(lockList.get(i).getDeviceSerialNumber() == serial) {
@@ -22,7 +22,7 @@ public class lockController {
 		return null;
 	}
 	
-	public static RCServo createLock(Integer serial) {
+	public static RCServo createLock(Integer serial) { // create a new lock and add to list
 		try {
 			RCServo lock = new RCServo();
 			lock.setDeviceSerialNumber(serial);
@@ -36,7 +36,7 @@ public class lockController {
 		return null;	
 	}
 	
-	public static double checkLock(Integer serial) {
+	public static double checkLock(Integer serial) { // check current position of lock
 		RCServo lock = lockExists(serial);
 		if(lock == null) {
 			RCServo newLock = createLock(serial);
@@ -57,7 +57,7 @@ public class lockController {
 		return -1;
 	}
 
-	public static void lock(Integer serial) {
+	public static void lock(Integer serial) { // lock a specific lock
 		RCServo lock = lockExists(serial);
 		if(lock == null) {
 			RCServo newLock = createLock(serial);
@@ -79,7 +79,7 @@ public class lockController {
 		}
 	}
 	
-	public static void unlock(Integer serial) {
+	public static void unlock(Integer serial) { // unlock a specific lock 
 		RCServo lock = lockExists(serial);
 		if(lock == null) {
 			RCServo newLock = createLock(serial);

@@ -9,7 +9,7 @@ public class lightController {
 	
 	private static List<DigitalOutput> lightList = new ArrayList<DigitalOutput>();
 	
-	public static DigitalOutput lightExists(Integer channel) {
+	public static DigitalOutput lightExists(Integer channel) { // check if a light (of a specific channel) already exists
 		for (int i = 0; i < lightList.size(); i++) {
             try {
 				if(lightList.get(i).getChannel() == channel) {
@@ -23,7 +23,7 @@ public class lightController {
 		return null;
 	}
 	
-	public static DigitalOutput createLight(Integer serial, Integer channel) {
+	public static DigitalOutput createLight(Integer serial, Integer channel) { // create a new instance of a light
 		try {
 			DigitalOutput light = new DigitalOutput();
 			light.setDeviceSerialNumber(serial);
@@ -37,7 +37,7 @@ public class lightController {
 		return null;	
 	}
 	
-	public static boolean checkLight(String serialChannel) {
+	public static boolean checkLight(String serialChannel) { // check the state of a specific light
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		
@@ -61,7 +61,7 @@ public class lightController {
 		return false;
 	}
 	
-	public static void on(String serialChannel) {
+	public static void on(String serialChannel) { // turn on a specific light
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		
@@ -77,7 +77,6 @@ public class lightController {
 			}
 		}else {
 			try {
-				// light.open(5000);
 				light.setDutyCycle(1);
 			} catch (PhidgetException e) {
 				// TODO Auto-generated catch block
@@ -87,7 +86,7 @@ public class lightController {
 		
 	}
 	
-	public static void off(String serialChannel) {
+	public static void off(String serialChannel) { // turn off a specific light 
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		
