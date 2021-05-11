@@ -22,7 +22,6 @@ class Device {
           result(err, null);
           return;
         }
-
         console.log('Added device: ', { ...newDevice });
         result(null, { device_serial_number: res.device_serial_number });
       },
@@ -40,13 +39,11 @@ class Device {
           result(err, null);
           return;
         }
-
         if (res.length) {
-          console.log('found devices: ', res);
+          console.log('Found devices: ', res);
           result(false, res);
           return;
         }
-
         // no devices found
         result({ kind: 'not_found' }, null);
       },
@@ -56,7 +53,7 @@ class Device {
   // list devices
   static delete(deviceId, result) {
     sql.query(
-      'DELETE FROM smarthomeapp_devices WHERE device_id=?',
+      `DELETE FROM smarthomeapp_devices WHERE device_id='${deviceId}'`,
       [deviceId],
       (err, res) => {
         if (err) {
@@ -64,7 +61,7 @@ class Device {
           result(err, null);
           return;
         }
-
+        console.log(`Deleted device: ${deviceId}`);
         result(null, res);
       },
     );

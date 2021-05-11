@@ -3,7 +3,10 @@ const User = require('../models/user.model.js');
 
 // create + save a new User
 exports.create = async (req, res) => {
-  const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  // regex used to validate email
+  const emailRegex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
   // validate request
   if (!req.body) {
     res.status(400).send({
@@ -43,26 +46,29 @@ exports.create = async (req, res) => {
 exports.login = (req, res) => {
   const { email } = req.body;
   const { password } = req.body;
+  // authorize user
   User.auth(email, password, (err, id) => {
     if (err) {
       res.status(400).send({
         message: err.message || 'Invalid email/password supplied',
       });
     } else {
+      // get auth token
       User.getToken(id, (_err, getToken) => {
         if (_err) {
           res.status(500).send({
             message: err.message || 'Server Error',
           });
         } else if (getToken) {
-          res.send({ id, token: getToken });
+          res.status(200).send({ id, token: getToken });
         } else {
+          // if no token exists set a new one
           User.setToken(id, (__err, setToken) => {
             if (__err) {
               res.status(500).send({
                 message: err.message || 'Server Error',
               });
-            } else res.send({ id, token: setToken });
+            } else res.status(200).send({ id, token: setToken });
           });
         }
       });
@@ -70,9 +76,10 @@ exports.login = (req, res) => {
   });
 };
 
-// logout - currently a bug where if you log out and its not authorized then try to log out again with authorization the token is still deleted but the server breaks
+// logout
 exports.logout = (req, res) => {
   try {
+    // delete current token
     const token = req.get('X-Authorization');
     User.deleteToken(token, (err) => {
       if (err) {

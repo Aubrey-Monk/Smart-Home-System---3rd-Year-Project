@@ -1,3 +1,4 @@
+// database credentials (using the MMU mudfoot server)
 module.exports = {
   HOST: 'mudfoot.doc.stu.mmu.ac.uk',
   PORT: '6306',

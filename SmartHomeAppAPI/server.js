@@ -5,7 +5,7 @@ const app = express();
 // used to parse JSON bodies
 app.use(express.json());
 
-// parse URL-encoded bodies
+// used to parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
 // simple route

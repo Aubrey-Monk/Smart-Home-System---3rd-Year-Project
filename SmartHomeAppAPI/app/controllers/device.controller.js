@@ -39,8 +39,8 @@ exports.list = async (req, res) => {
       message: 'Bad Request',
     });
   } else {
-    console.log(type);
-    console.log(id);
+    // console.log(type);
+    // console.log(id);
     // add device
     Device.list(type, id, (err, data) => {
       if (err) {
@@ -61,14 +61,17 @@ exports.delete = async (req, res) => {
       message: 'Bad Request',
     });
   } else {
-    console.log(deviceId);
+    // console.log(deviceId);
     // add device
-    Device.delete(deviceId, (err, data) => {
+    Device.delete(deviceId, (err) => {
       if (err) {
         res.status(500).send({
           message: err.message || 'Server Error',
         });
-      } else res.status(200).send(data);
+      } else
+        res.status(200).send({
+          message: 'OK',
+        });
     });
   }
 };
