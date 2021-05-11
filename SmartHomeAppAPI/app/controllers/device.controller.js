@@ -51,3 +51,24 @@ exports.list = async (req, res) => {
     });
   }
 };
+
+// delete a device
+exports.delete = async (req, res) => {
+  const deviceId = req.params.device_id;
+  // validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: 'Bad Request',
+    });
+  } else {
+    console.log(deviceId);
+    // add device
+    Device.delete(deviceId, (err, data) => {
+      if (err) {
+        res.status(500).send({
+          message: err.message || 'Server Error',
+        });
+      } else res.status(200).send(data);
+    });
+  }
+};

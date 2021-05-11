@@ -52,6 +52,23 @@ class Device {
       },
     );
   }
+
+  // list devices
+  static delete(deviceId, result) {
+    sql.query(
+      'DELETE FROM smarthomeapp_devices WHERE device_id=?',
+      [deviceId],
+      (err, res) => {
+        if (err) {
+          console.log('error: ', err);
+          result(err, null);
+          return;
+        }
+
+        result(null, res);
+      },
+    );
+  }
 }
 
 module.exports = Device;
