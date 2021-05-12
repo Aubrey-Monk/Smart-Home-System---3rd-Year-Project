@@ -122,6 +122,7 @@ const LocksScreen = (props) => {
                 globalStyle.listView,
                 {
                   backgroundColor: colors.accent,
+                  borderColor: colors.primary,
                 },
               ]}>
               <View style={globalStyle.textView}>

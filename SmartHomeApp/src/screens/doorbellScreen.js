@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import {View, ToastAndroid} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+
 import {Text, Button, ActivityIndicator} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ListDevices from '../components/listDevices';
@@ -31,6 +31,7 @@ const DoorbellScreen = (props) => {
     const unsubscribe = navigation.addListener('focus', () => {
       try {
         mqttClient.close();
+        console.log('disconnect');
       } catch (e) {
         console.log(e);
       }
@@ -98,10 +99,12 @@ const DoorbellScreen = (props) => {
     );
   }
   return (
-    <View>
+    <View style={[globalStyle.flexContainer, {paddingTop: '50%'}]}>
       <Button
         role="button"
         mode="contained"
+        contentStyle={globalStyle.buttonContent}
+        style={globalStyle.submitButton}
         onPress={() =>
           props.navigation.navigate('homeStackNavigator', {
             screen: 'Add Device',
