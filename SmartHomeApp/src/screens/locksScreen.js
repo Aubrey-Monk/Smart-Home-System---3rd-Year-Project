@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ListDevices from '../components/listDevices';
 import MQTTConnection from '../components/mqttClient';
 
-const SecurityScreen = (props) => {
+const LocksScreen = (props) => {
   const {navigation} = props;
 
   const [deviceList, setDeviceList] = useState([]);
@@ -128,11 +128,11 @@ const SecurityScreen = (props) => {
   );
 };
 
-SecurityScreen.propTypes = {
+LocksScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     addListener: PropTypes.func.isRequired,
   }).isRequired,
 };
 
-export default SecurityScreen;
+export default LocksScreen;
