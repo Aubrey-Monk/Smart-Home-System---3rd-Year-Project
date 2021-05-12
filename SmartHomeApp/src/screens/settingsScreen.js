@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {TouchableRipple, Switch, useTheme} from 'react-native-paper';
+import {View, StyleSheet} from 'react-native';
+import {TouchableRipple, Switch, useTheme, Text} from 'react-native-paper';
 import {Context} from '../components/context';
 
 const SettingsScreen = () => {
@@ -29,7 +29,7 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   themeToggleView: {
     flexDirection: 'row',
-    alignSelf: 'flex-end',
+    alignSelf: 'flex-start',
     paddingVertical: '4%',
     paddingHorizontal: '4%',
   },

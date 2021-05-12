@@ -23,10 +23,10 @@ const HomeNavigator = () => {
         width: 240,
       }}
       drawerContentOptions={{
-        activeTintColor: 'black',
-        activeBackgroundColor: colors.primary,
+        activeTintColor: colors.text,
+        activeBackgroundColor: colors.accent,
         inactiveBackgroundColor: colors.primary,
-        inactiveTintColor: 'black',
+        inactiveTintColor: colors.text,
       }}
       initialRouteName="Home"
       drawerContent={(props) => (
@@ -34,7 +34,7 @@ const HomeNavigator = () => {
           <DrawerItemList {...props} />
           <DrawerItem
             inactiveBackgroundColor={colors.primary}
-            inactiveTintColor="black"
+            inactiveTintColor={colors.text}
             label="Logout"
             onPress={() => Logout(props)}
           />
@@ -46,6 +46,7 @@ const HomeNavigator = () => {
         options={{
           headerShown: true,
           headerTitleAlign: 'center',
+          headerTintColor: colors.text,
         }}
       />
       <Drawer.Screen
@@ -54,6 +55,7 @@ const HomeNavigator = () => {
         options={{
           headerShown: true,
           headerTitleAlign: 'center',
+          headerTintColor: colors.text,
         }}
       />
     </Drawer.Navigator>

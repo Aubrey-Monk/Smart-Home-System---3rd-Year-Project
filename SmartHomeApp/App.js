@@ -45,7 +45,9 @@ export default function Main() {
     colors: {
       ...NavigationDarkTheme.colors,
       ...PaperDarkTheme.colors,
-      surface: '#BB86FC',
+      surface: '#FFFFFF',
+      text: '#FFFFFF',
+      placeholder: '#FFFFFF',
     },
   };
 
