@@ -44,7 +44,7 @@ exports.list = async (req, res) => {
       if (err) {
         if (err.kind === 'not_found') {
           res.status(404).send({
-            message: err.message || 'No devices found',
+            message: 'No devices found',
           });
         } else {
           res.status(500).send({

@@ -70,13 +70,13 @@ public class subscriberCallback implements MqttCallback {
 			mqttClient.publish("18026172/light/checked", payload);
 		}
 		
-		// for doorbells
+		// for doorbell
 		
 		if(topic.equals("18026172/doorbell/activate")) {
-			String[] serialChannels = new String(message.getPayload()).split("-");
-			for (int i = 0; i < serialChannels.length; i++) {		
-				doorbellController.activate(serialChannels[i]);
-	        }
+			doorbellController.activate(new String(message.getPayload()), mqttClient);
+		}
+		if(topic.equals("18026172/doorbell/deactivate")) {
+			doorbellController.deactivate(new String(message.getPayload()));
 		}
 		
 		// for motion sensors
@@ -84,7 +84,7 @@ public class subscriberCallback implements MqttCallback {
 		if(topic.equals("18026172/motion/activate")) {
 			String[] serialChannels = new String(message.getPayload()).split("-");
 			for (int i = 0; i < serialChannels.length; i++) {		
-				motionSensorController.activate(serialChannels[i]);
+				motionSensorController.activate(serialChannels[i], mqttClient);
 			}
 		}
 		

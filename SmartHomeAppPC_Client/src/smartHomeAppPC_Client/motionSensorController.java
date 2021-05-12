@@ -3,6 +3,11 @@ package smartHomeAppPC_Client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+
 import com.phidget22.*;
 
 public class motionSensorController {
@@ -37,7 +42,7 @@ public class motionSensorController {
 		return null;	
 	}
 	
-	public static void activate(String serialChannel) { // activate a specific motionSensor 
+	public static void activate(String serialChannel, MqttClient mqttClient) { // activate a specific motionSensor 
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		
@@ -46,12 +51,30 @@ public class motionSensorController {
 			VoltageRatioInput newMotionSensor = createmotionSensor(serialNumber, channel);
 			try {
 				newMotionSensor.addSensorChangeListener(new VoltageRatioInputSensorChangeListener() {
+					Boolean check = true;
 					public void onSensorChange(VoltageRatioInputSensorChangeEvent e) {
-						if(e.getSensorValue() > 0.5 || e.getSensorValue() < -0.5) {
-						System.out.println("SensorValue: " + e.getSensorValue());
-						System.out.println("Channel: " + channel);
-						System.out.println("----------");
+						
+						if((e.getSensorValue() > 0.5 || e.getSensorValue() < -0.5) && check == true) {
+							System.out.println("MOTION "+ serialChannel);
+							try {
+								MqttMessage payload = new MqttMessage(serialChannel.getBytes());
+								mqttClient.publish("18026172/motion/motion", payload);
+							} catch (MqttPersistenceException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (MqttException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							check = false;
+							new java.util.Timer().schedule(new java.util.TimerTask() {
+								@Override
+								public void run() {       	
+								check = true;
+								}
+							}, 2000);
 						}
+						
 					}
 				});
 
@@ -63,7 +86,27 @@ public class motionSensorController {
 				e.printStackTrace();
 			}
 		}else {
-			System.out.println("do nothing");
+			try {
+				motionSensor.open(5000);
+				motionSensor.setSensorType(VoltageRatioSensorType.PN_1111);
+			} catch (PhidgetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void deactivate(String serialChannel) { // turn off a specific light 
+		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
+		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
+		VoltageRatioInput sensor = motionSensorExists(serialNumber, channel);
+		if(!(sensor == null)) {
+			try {
+				sensor.close();
+			} catch (PhidgetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

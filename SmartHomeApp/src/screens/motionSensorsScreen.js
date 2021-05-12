@@ -8,32 +8,42 @@ import ListDevices from '../components/listDevices';
 import MQTTConnection from '../components/mqttClient';
 import globalStyle from '../styles/globalStyle';
 
-const LocksScreen = (props) => {
+const LightScreen = (props) => {
   const {navigation} = props;
   const [isLoading, setIsLoading] = useState(true);
   const [deviceList, setDeviceList] = useState([]);
   const [mqttClient] = useState(new MQTTConnection());
-  // array used to monitor state of locks
-  const [lockedDoors, setLockedDoors] = useState([]);
+  // array used to monitor state of lights
+  const [activeLights, setActiveLights] = useState([]);
 
-  // lock or unlock a lock depending on state (lockedDoors array)
-  const lockUnlock = (serialNumber) => {
-    if (lockedDoors.indexOf(serialNumber) > -1) {
-      mqttClient.publish('18026172/lock/unlock', serialNumber.toString());
-      setLockedDoors(lockedDoors.filter((item) => item !== serialNumber));
+  const onOff = (serialNumber, channel) => {
+    if (activeLights.indexOf(serialNumber + channel) > -1) {
+      mqttClient.publish(
+        '18026172/light/off',
+        serialNumber.toString() + channel.toString(),
+      );
+      setActiveLights(
+        activeLights.filter((item) => item !== serialNumber + channel),
+      );
     } else {
-      mqttClient.publish('18026172/lock/lock', serialNumber.toString());
-      setLockedDoors([...lockedDoors, serialNumber]);
+      mqttClient.publish(
+        '18026172/light/on',
+        serialNumber.toString() + channel.toString(),
+      );
+
+      setActiveLights([...activeLights, serialNumber + channel]);
     }
   };
 
-  // subscribes to the 'checked' topic then publishes a message to client with device serial numbers to check their position, if a message arrives with their position at (0-180) the state is updated, if their position arrives as 1.0 then a device not connected message appears
-  const checkLocks = useCallback(
+  const checkLights = useCallback(
     async (data) => {
       let message = '';
-      // loop through each serial number of returned device list and append to check message, so its ready to be published
       Object.keys(data).forEach((key) => {
-        message = `${message + data[key].device_serial_number.toString()}-`;
+        message = `${
+          message +
+          data[key].device_serial_number.toString() +
+          data[key].device_channel.toString()
+        }-`;
       });
 
       const onMessageArrived = (_message) => {
@@ -41,42 +51,41 @@ const LocksScreen = (props) => {
         //   'MQTT Message arrived payloadString: ',
         //   _message.payloadString,
         // );
-        const positions = _message.payloadString.split('-');
-        const lockedSerialArray = [];
-        // loop through the received position of each lock
+        const states = _message.payloadString.split('-');
+        const activeSerialArray = [];
+
         Object.keys(data).forEach((key) => {
-          // console.log(positions[key]);
-          if (positions[key] === '180.0') {
-            // update array to match position of lock
-            lockedSerialArray.push(data[key].device_serial_number);
-            // if lock dosent exists/is disconnected
-          } else if (positions[key] === '1.0') {
+          if (states[key] === 'true') {
+            activeSerialArray.push(
+              data[key].device_serial_number.toString() +
+                data[key].device_channel.toString(),
+            );
+          } else if (states[key] === '1.0') {
             ToastAndroid.show(
-              `Device with serial number: ${data[key].device_serial_number} is not connected.`,
+              `Device with serial number: ${data[key].device_serial_number} and Channel number: ${data[key].device_channel}  is not connected.`,
               ToastAndroid.SHORT,
             );
           }
         });
-        setLockedDoors(lockedSerialArray); // update locked doors state (lockedDoors array)
+        setActiveLights(activeSerialArray);
         setIsLoading(false);
       };
-      mqttClient.onMessageArrived = onMessageArrived; // set onMessage arrived callback
-      mqttClient.subscribe('18026172/lock/checked'); // subscribe to 'checked' topic ready for a response
-      mqttClient.publish('18026172/lock/check', message); // publish check message
+      mqttClient.onMessageArrived = onMessageArrived;
+      mqttClient.subscribe('18026172/light/checked');
+      mqttClient.publish('18026172/light/check', message);
     },
     [mqttClient],
   );
 
   const getDeviceList = useCallback(async () => {
-    const data = await ListDevices('Lock');
-    // if returned data is not empty then set list state and check all locks
+    const data = await ListDevices('Light');
     if (!(typeof data === 'undefined')) {
       setDeviceList(data);
-      checkLocks(data);
+      checkLights(data);
     } else {
       setIsLoading(false);
     }
-  }, [checkLocks]);
+  }, [checkLights]);
 
   // component load
   useEffect(() => {
@@ -85,8 +94,11 @@ const LocksScreen = (props) => {
         // console.log('MQTT Connected');
         await getDeviceList();
       };
-      mqttClient.onConnect = onConnect; // set onConnect callback
-      mqttClient.connect('test.mosquitto.org', 8080); // connect to mqtt broker
+
+      mqttClient.onConnect = onConnect;
+
+      // mqttClient.onMessageArrived = onMessageArrived;
+      mqttClient.connect('test.mosquitto.org', 8080);
     });
 
     return unsubscribe;
@@ -96,7 +108,8 @@ const LocksScreen = (props) => {
     () =>
       // on un-mount
       () => {
-        mqttClient.close(); // disconnects current client when user leaves this screen
+        // console.log('MQTT Disconnected');
+        mqttClient.close();
       },
     [mqttClient],
   );
@@ -110,21 +123,31 @@ const LocksScreen = (props) => {
   }
   return (
     <View>
+      <Text>MOTION</Text>
       <FlatList
         data={deviceList}
         renderItem={({item}) => (
           <View>
             <Text>{item.device_serial_number.toString()}</Text>
+            <Text>{item.device_channel.toString()}</Text>
             <Text>{item.device_name.toString()}</Text>
             <Icon
               name={
-                lockedDoors.indexOf(item.device_serial_number) > -1
-                  ? 'lock'
-                  : 'lock-open-variant'
+                activeLights.indexOf(
+                  item.device_serial_number.toString() +
+                    item.device_channel.toString(),
+                ) > -1
+                  ? 'lightbulb-on'
+                  : 'lightbulb-off'
               }
               size={40}
               color="red"
-              onPress={() => lockUnlock(item.device_serial_number)}
+              onPress={() =>
+                onOff(
+                  item.device_serial_number.toString(),
+                  item.device_channel.toString(),
+                )
+              }
             />
           </View>
         )}
@@ -136,7 +159,7 @@ const LocksScreen = (props) => {
         onPress={() =>
           props.navigation.navigate('homeStackNavigator', {
             screen: 'Add Device',
-            params: {deviceType: 'Lock'},
+            params: {deviceType: 'Light'},
           })
         }>
         <Text>Add Device</Text>
@@ -145,11 +168,11 @@ const LocksScreen = (props) => {
   );
 };
 
-LocksScreen.propTypes = {
+LightScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     addListener: PropTypes.func.isRequired,
   }).isRequired,
 };
 
-export default LocksScreen;
+export default LightScreen;

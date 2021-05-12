@@ -45,6 +45,7 @@ public class lightController {
 		if(light == null) {
 			DigitalOutput newLight = createLight(serialNumber, channel);
 			try {
+				newLight.open(5000);
 				return(newLight.getState());
 			} catch (PhidgetException e) {
 				// TODO Auto-generated catch block

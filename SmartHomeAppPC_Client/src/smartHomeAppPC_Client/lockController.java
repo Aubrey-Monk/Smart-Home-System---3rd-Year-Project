@@ -97,7 +97,6 @@ public class lockController {
 				newLock.setTargetPosition(0);
 				newLock.setEngaged(true);
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else {
@@ -105,7 +104,6 @@ public class lockController {
 				lock.setTargetPosition(0);
 				lock.setEngaged(true);
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

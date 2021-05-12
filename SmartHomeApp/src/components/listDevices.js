@@ -16,7 +16,7 @@ const ListDevices = async (type) => {
         return response.json();
       }
       if (response.status === 404) {
-        throw new Error('No Device Found.');
+        throw new Error('No Devices Found.');
       }
       if (response.status === 500) {
         throw new Error('Server Error.');

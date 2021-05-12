@@ -3,6 +3,11 @@ package smartHomeAppPC_Client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+
 import com.phidget22.*;
 
 public class doorbellController {
@@ -37,20 +42,35 @@ public class doorbellController {
 		return null;	
 	}
 	
-	public static void activate(String serialChannel) { // activate a specific doorbell 
+	public static void activate(String serialChannel, MqttClient mqttClient) { // activate a specific doorbell 
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
-		
 		VoltageRatioInput doorbell = doorbellExists(serialNumber, channel);
 		if(doorbell == null) {
 			VoltageRatioInput newDoorbell = createDoorbell(serialNumber, channel);
 			try {
 				newDoorbell.addSensorChangeListener(new VoltageRatioInputSensorChangeListener() {
+					Boolean check = true;
 					public void onSensorChange(VoltageRatioInputSensorChangeEvent e) {
-						if(e.getSensorValue() > 0) {
-						System.out.println("SensorValue: " + e.getSensorValue());
-						System.out.println("SensorUnit: " + e.getSensorUnit().symbol);
-						System.out.println("----------");
+						if(e.getSensorValue() > 0 && check == true) {
+							System.out.println("RING RING");
+							try {
+								MqttMessage payload = new MqttMessage("RING RING!".getBytes());
+								mqttClient.publish("18026172/doorbell/ringing", payload);
+							} catch (MqttPersistenceException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (MqttException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							check = false;
+							new java.util.Timer().schedule(new java.util.TimerTask() {
+								@Override
+								public void run() {       	
+								check = true;
+								}
+							}, 2000);
 						}
 					}
 				});
@@ -63,7 +83,27 @@ public class doorbellController {
 				e.printStackTrace();
 			}
 		}else {
-			System.out.println("do nothing");
+			try {
+				doorbell.open(5000);
+				doorbell.setSensorType(VoltageRatioSensorType.PN_1106);
+			} catch (PhidgetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void deactivate(String serialChannel) {
+		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
+		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
+		VoltageRatioInput doorbell = doorbellExists(serialNumber, channel);
+		if(!(doorbell == null)) {
+			try {
+				doorbell.close();
+			} catch (PhidgetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
