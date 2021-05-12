@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import AddDevice from '../components/addDevice';
+import globalStyle from '../styles/globalStyle';
 
 const AddDeviceScreen = (props) => {
   const {route} = props;
@@ -27,8 +28,8 @@ const AddDeviceScreen = (props) => {
   };
 
   return (
-    <View>
-      <View>
+    <View style={globalStyle.flexContainer}>
+      <View style={globalStyle.textInputView}>
         <TextInput
           role="textbox"
           type="outlined"
@@ -64,8 +65,13 @@ const AddDeviceScreen = (props) => {
           value={deviceRoom}
         />
       </View>
-      <View>
-        <Button role="button" mode="contained" onPress={() => submit()}>
+      <View style={globalStyle.submitButtonView}>
+        <Button
+          role="button"
+          mode="contained"
+          contentStyle={globalStyle.buttonContent}
+          style={globalStyle.submitButton}
+          onPress={() => submit()}>
           <Text>Add Device</Text>
         </Button>
       </View>

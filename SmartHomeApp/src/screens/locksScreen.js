@@ -2,13 +2,16 @@ import React, {useState, useEffect, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import {View, ToastAndroid} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import {Text, Button, ActivityIndicator} from 'react-native-paper';
+import {Text, Button, ActivityIndicator, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ListDevices from '../components/listDevices';
 import MQTTConnection from '../components/mqttClient';
 import globalStyle from '../styles/globalStyle';
 
 const LocksScreen = (props) => {
+  // for no paper components so paper theme colors can be used
+  const {colors} = useTheme();
+
   const {navigation} = props;
   const [isLoading, setIsLoading] = useState(true);
   const [deviceList, setDeviceList] = useState([]);
@@ -109,38 +112,56 @@ const LocksScreen = (props) => {
     );
   }
   return (
-    <View>
-      <FlatList
-        data={deviceList}
-        renderItem={({item}) => (
-          <View>
-            <Text>{item.device_serial_number.toString()}</Text>
-            <Text>{item.device_name.toString()}</Text>
-            <Icon
-              name={
-                lockedDoors.indexOf(item.device_serial_number) > -1
-                  ? 'lock'
-                  : 'lock-open-variant'
-              }
-              size={40}
-              color="red"
-              onPress={() => lockUnlock(item.device_serial_number)}
-            />
-          </View>
-        )}
-        keyExtractor={(item) => item.device_id.toString()}
-      />
-      <Button
-        role="button"
-        mode="contained"
-        onPress={() =>
-          props.navigation.navigate('homeStackNavigator', {
-            screen: 'Add Device',
-            params: {deviceType: 'Lock'},
-          })
-        }>
-        <Text>Add Device</Text>
-      </Button>
+    <View style={globalStyle.flexContainer}>
+      <View style={globalStyle.textInputView}>
+        <FlatList
+          data={deviceList}
+          renderItem={({item}) => (
+            <View
+              style={[
+                globalStyle.listView,
+                {
+                  backgroundColor: colors.accent,
+                },
+              ]}>
+              <View style={globalStyle.textView}>
+                <Text style={globalStyle.text}>
+                  {`${item.device_room.toString()} ${item.device_name.toString()}`}
+                </Text>
+              </View>
+              <View>
+                <Icon
+                  style={globalStyle.flexContainer}
+                  name={
+                    lockedDoors.indexOf(item.device_serial_number) > -1
+                      ? 'lock'
+                      : 'lock-open-variant'
+                  }
+                  size={40}
+                  color={colors.text}
+                  onPress={() => lockUnlock(item.device_serial_number)}
+                />
+              </View>
+            </View>
+          )}
+          keyExtractor={(item) => item.device_id.toString()}
+        />
+      </View>
+      <View style={globalStyle.submitButtonView}>
+        <Button
+          role="button"
+          mode="contained"
+          contentStyle={globalStyle.buttonContent}
+          style={globalStyle.submitButton}
+          onPress={() =>
+            props.navigation.navigate('homeStackNavigator', {
+              screen: 'Add Device',
+              params: {deviceType: 'Lock'},
+            })
+          }>
+          <Text>Add Lock</Text>
+        </Button>
+      </View>
     </View>
   );
 };

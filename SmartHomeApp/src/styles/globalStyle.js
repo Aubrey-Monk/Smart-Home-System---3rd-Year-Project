@@ -36,4 +36,20 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text: {
+    flex: 1,
+    fontSize: 18,
+    marginTop: '5%',
+    marginLeft: '5%',
+  },
+
+  listView: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderRadius: 20,
+    borderWidth: 3,
+    margin: '2%',
+    padding: '2%',
+  },
 });
