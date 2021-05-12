@@ -9,6 +9,7 @@ import {
 } from '@react-navigation/drawer';
 import {useTheme} from 'react-native-paper';
 import HomeScreen from '../screens/homeScreen';
+import SettingsScreen from '../screens/settingsScreen';
 import Logout from '../components/logout';
 
 const Drawer = createDrawerNavigator();
@@ -24,6 +25,8 @@ const HomeNavigator = () => {
       drawerContentOptions={{
         activeTintColor: 'black',
         activeBackgroundColor: colors.primary,
+        inactiveBackgroundColor: colors.primary,
+        inactiveTintColor: 'black',
       }}
       initialRouteName="Home"
       drawerContent={(props) => (
@@ -40,6 +43,14 @@ const HomeNavigator = () => {
       <Drawer.Screen
         name="Home"
         component={HomeScreen}
+        options={{
+          headerShown: true,
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Drawer.Screen
+        name="Settings"
+        component={SettingsScreen}
         options={{
           headerShown: true,
           headerTitleAlign: 'center',
