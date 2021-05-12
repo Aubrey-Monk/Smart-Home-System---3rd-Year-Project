@@ -31,4 +31,9 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: 'space-evenly',
   },
+  activityIndicator: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

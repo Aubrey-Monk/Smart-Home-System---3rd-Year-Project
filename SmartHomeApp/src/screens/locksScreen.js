@@ -1,26 +1,26 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import PropTypes from 'prop-types';
-import {View} from 'react-native';
+import {View, ToastAndroid} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import {Text, Button} from 'react-native-paper';
+import {Text, Button, ActivityIndicator} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ListDevices from '../components/listDevices';
 import MQTTConnection from '../components/mqttClient';
+import globalStyle from '../styles/globalStyle';
 
 const LocksScreen = (props) => {
   const {navigation} = props;
 
+  const [isLoading, setIsLoading] = useState(true);
   const [deviceList, setDeviceList] = useState([]);
   const [mqttClient] = useState(new MQTTConnection());
   const [lockedDoors, setLockedDoors] = useState([]);
 
   const lockUnlock = (serialNumber) => {
     if (lockedDoors.indexOf(serialNumber) > -1) {
-      // console.log('unlocking');
       mqttClient.publish('18026172/lock/unlock', serialNumber.toString());
       setLockedDoors(lockedDoors.filter((item) => item !== serialNumber));
     } else {
-      // console.log('locking');
       mqttClient.publish('18026172/lock/lock', serialNumber.toString());
       setLockedDoors([...lockedDoors, serialNumber]);
     }
@@ -30,7 +30,7 @@ const LocksScreen = (props) => {
     async (data) => {
       let message = '';
       Object.keys(data).forEach((key) => {
-        message = `${message + data[key].serial_number.toString()}-`;
+        message = `${message + data[key].device_serial_number.toString()}-`;
       });
 
       const onMessageArrived = (_message) => {
@@ -41,11 +41,14 @@ const LocksScreen = (props) => {
         const positions = _message.payloadString.split('-');
         const lockedSerialArray = [];
         Object.keys(data).forEach((key) => {
-          // message = `${message + data[key].serial_number.toString()}-`;
-          // console.log(positions[key]);
-          // console.log(data[key].serial_number.toString());
+          console.log(positions[key]);
           if (positions[key] === '180.0') {
-            lockedSerialArray.push(data[key].serial_number);
+            lockedSerialArray.push(data[key].device_serial_number);
+          } else if (positions[key] === '1.0') {
+            ToastAndroid.show(
+              `Device with serial number: ${data[key].device_serial_number} is not connected.`,
+              ToastAndroid.SHORT,
+            );
           }
         });
         setLockedDoors(lockedSerialArray);
@@ -59,21 +62,26 @@ const LocksScreen = (props) => {
 
   const getDeviceList = useCallback(async () => {
     const data = await ListDevices('Lock');
-    setDeviceList(data);
-    checkLocks(data);
+    if (typeof data === 'undefined') {
+      ToastAndroid.show(
+        'No locks found, please add one to continue.',
+        ToastAndroid.SHORT,
+      );
+    } else {
+      setDeviceList(data);
+      checkLocks(data);
+    }
   }, [checkLocks]);
 
   // component load
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       const onConnect = async () => {
-        // console.log('MQTT Connected');
+        console.log('MQTT Connected');
         await getDeviceList();
+        setIsLoading(false);
       };
-
       mqttClient.onConnect = onConnect;
-
-      // mqttClient.onMessageArrived = onMessageArrived;
       mqttClient.connect('test.mosquitto.org', 8080);
     });
 
@@ -89,8 +97,13 @@ const LocksScreen = (props) => {
     [mqttClient],
   );
 
-  // console.log(lockedDoors);
-
+  if (isLoading === true) {
+    return (
+      <View style={globalStyle.flexContainer}>
+        <ActivityIndicator style={globalStyle.activityIndicator} animating />
+      </View>
+    );
+  }
   return (
     <View>
       <FlatList

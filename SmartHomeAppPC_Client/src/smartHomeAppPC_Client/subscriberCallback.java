@@ -40,7 +40,7 @@ public class subscriberCallback implements MqttCallback {
 		if(topic.equals("18026172/lock/check")) {
 			String[] serials = new String(message.getPayload()).split("-");
 			String positions = "";
-			for (int i = 0; i < serials.length; i++) {		
+			for (int i = 0; i < serials.length; i++) {	
 				if(lockController.checkLock(Integer.parseInt(serials[i])) == 33.1578947368421) {
 					lockController.lock(Integer.parseInt(serials[i]));
 					positions += String.valueOf(180.0)+"-";

@@ -42,20 +42,29 @@ public class lockController {
 		if(lock == null) {
 			RCServo newLock = createLock(serial);
 			try {
-				return(newLock.getPosition());
+				return(newLock.getPosition()); // try to get current position
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try { // see if lock has been reconnected
+					newLock.setTargetPosition(180);
+					newLock.setEngaged(true);
+					return(180.0);
+				} catch (PhidgetException _e) {
+					return 1.0; // on error return as if no lock exists
+				}
 			}
 		}else {
 			try {
-				return(lock.getPosition());
+				return(lock.getPosition()); // try to get current position
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try { // see if lock has been reconnected
+					lock.setTargetPosition(180);
+					lock.setEngaged(true);
+					return(180.0);
+				} catch (PhidgetException _e) {
+					return 1.0; // on error return as if no lock exists
+				}
 			}
 		}
-		return -1;
 	}
 
 	public static void lock(Integer serial) { // lock a specific lock

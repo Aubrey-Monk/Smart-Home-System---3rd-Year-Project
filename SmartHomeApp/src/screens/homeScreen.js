@@ -10,13 +10,7 @@ const HomeScreen = (props) => {
   const {colors} = useTheme();
 
   return (
-    <View
-      style={[
-        globalStyle.flexContainer,
-        {
-          flexDirection: 'row',
-        },
-      ]}>
+    <View style={[globalStyle.flexContainer, {flexDirection: 'row'}]}>
       <View style={styles.firstTwoButtonView}>
         <Button
           role="button"

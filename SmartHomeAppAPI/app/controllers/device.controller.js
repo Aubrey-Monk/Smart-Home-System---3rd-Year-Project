@@ -39,14 +39,18 @@ exports.list = async (req, res) => {
       message: 'Bad Request',
     });
   } else {
-    // console.log(type);
-    // console.log(id);
     // add device
     Device.list(type, id, (err, data) => {
       if (err) {
-        res.status(500).send({
-          message: err.message || 'Server Error',
-        });
+        if (err.kind === 'not_found') {
+          res.status(404).send({
+            message: err.message || 'No devices found',
+          });
+        } else {
+          res.status(500).send({
+            message: err.message || 'Server Error',
+          });
+        }
       } else res.status(200).send(data);
     });
   }
