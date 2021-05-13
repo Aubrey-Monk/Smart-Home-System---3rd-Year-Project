@@ -1,2 +1,2 @@
-const globalStore = {sound: true, vibrate: true};
+const globalStore = {};
 export default globalStore;

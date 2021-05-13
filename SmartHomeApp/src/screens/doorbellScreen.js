@@ -93,8 +93,8 @@ const DoorbellScreen = (props) => {
             Notification(
               'Someone is at your door!',
               'Doorbell',
-              false,
-              false,
+              true,
+              true,
               'Doorbell is Ringing',
               'Doorbell',
             );
