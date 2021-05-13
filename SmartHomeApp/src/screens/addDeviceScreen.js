@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {View} from 'react-native';
+import {View, ToastAndroid} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import AddDevice from '../components/addDevice';
 import globalStyle from '../styles/globalStyle';
@@ -16,15 +16,47 @@ const AddDeviceScreen = (props) => {
   const [deviceChannel, setDeviceChannel] = useState('');
 
   const submit = () => {
-    const deviceParams = {
-      device_serial_number: parseInt(serialNumber, 10),
-      device_name: deviceName,
-      device_type: deviceType,
-      device_room: deviceRoom,
-      device_channel: parseInt(deviceChannel, 10),
-    };
+    try {
+      const whitespaceRegexString = /^\s+$/; // for stopping the user from entering only whitespace in the device name and room fields
+      // check if name and room fields are empty or contain whitespace
+      if (
+        deviceName === '' ||
+        deviceRoom === '' ||
+        whitespaceRegexString.test(deviceName) ||
+        whitespaceRegexString.test(deviceRoom)
+      ) {
+        ToastAndroid.show('Invalid name or room entered.', ToastAndroid.SHORT);
+        // check if serial is an 6 digit integer
+      } else if (Number.isNaN(serialNumber) || serialNumber.length !== 6) {
+        ToastAndroid.show(
+          'Invalid serial number entered. Serial number should be 6 digits.',
+          ToastAndroid.SHORT,
+        );
+        // check channel is a 1-2 digit integer
+      } else if (
+        Number.isNaN(deviceChannel) ||
+        !(deviceChannel.length <= 2 && deviceChannel.length > 0)
+      ) {
+        ToastAndroid.show(
+          'Invalid channel entered. Channel should be 1 or 2 digits.',
+          ToastAndroid.SHORT,
+        );
+      } else {
+        // create device details object
+        const deviceParams = {
+          device_serial_number: parseInt(serialNumber, 10),
+          device_name: deviceName,
+          device_type: deviceType,
+          device_room: deviceRoom,
+          device_channel: parseInt(deviceChannel, 10),
+        };
 
-    AddDevice(props, deviceParams);
+        // call add device component
+        AddDevice(props, deviceParams);
+      }
+    } catch (e) {
+      ToastAndroid.show('An Unexpected Error Has Occured', ToastAndroid.SHORT);
+    }
   };
 
   return (

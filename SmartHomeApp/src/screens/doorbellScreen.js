@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import {View, ToastAndroid} from 'react-native';
-
 import {Text, Button, ActivityIndicator} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ListDevices from '../components/listDevices';
 import MQTTConnection from '../components/mqttClient';
+import globalClient from '../components/globalClient';
 import globalStyle from '../styles/globalStyle';
 
 const DoorbellScreen = (props) => {
@@ -13,52 +13,54 @@ const DoorbellScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDoorbell, setIsDoorbell] = useState(false);
   const [deviceList, setDeviceList] = useState([]);
-  const [mqttClient] = useState(new MQTTConnection());
 
   const getDeviceList = useCallback(async () => {
-    const data = await ListDevices('Doorbell');
-    console.log(data);
-    if (!(typeof data === 'undefined')) {
-      setDeviceList(data);
-      setIsDoorbell(true);
-    } else {
-      // setIsLoading(false);
+    try {
+      const data = await ListDevices('Doorbell');
+      if (!(typeof data === 'undefined')) {
+        setDeviceList(data);
+        setIsDoorbell(true);
+      } else {
+        setIsDoorbell(false);
+      }
+    } catch (e) {
+      ToastAndroid.show('An Unexpected Error Has Occured', ToastAndroid.SHORT);
     }
   }, []);
 
   // component load
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      // try to disconnect client to avoid multiple client instances
       try {
-        mqttClient.close();
-        console.log('disconnect');
+        globalClient.doorbellClient.close();
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
 
+      // create mqtt client for doorbell
+      globalClient.doorbellClient = new MQTTConnection();
+
       const onConnect = async () => {
-        // console.log('MQTT Connected');
-        const onMessageArrived = (_message) => {
-          console.log(
-            'MQTT Message arrived payloadString: ',
-            _message.payloadString,
-          );
+        const onMessageArrived = () => {
           ToastAndroid.show('Doorbell is ringing!!!', ToastAndroid.SHORT);
         };
-        mqttClient.onMessageArrived = onMessageArrived;
-        mqttClient.subscribe('18026172/doorbell/ringing');
+
+        globalClient.doorbellClient.onMessageArrived = onMessageArrived;
+
+        globalClient.doorbellClient.subscribe('18026172/doorbell/ringing');
+
         await getDeviceList();
         setIsLoading(false);
       };
 
-      mqttClient.onConnect = onConnect;
+      globalClient.doorbellClient.onConnect = onConnect;
 
-      // mqttClient.onMessageArrived = onMessageArrived;
-      mqttClient.connect('test.mosquitto.org', 8080);
+      globalClient.doorbellClient.connect('test.mosquitto.org', 8080);
     });
 
     return unsubscribe;
-  }, [getDeviceList, navigation, mqttClient]);
+  }, [getDeviceList, navigation]);
 
   if (isLoading === true) {
     return (
@@ -75,7 +77,7 @@ const DoorbellScreen = (props) => {
           role="button"
           mode="contained"
           onPress={() =>
-            mqttClient.publish(
+            globalClient.doorbellClient.publish(
               '18026172/doorbell/activate',
               deviceList[0].device_serial_number.toString() +
                 deviceList[0].device_channel.toString(),
@@ -87,7 +89,7 @@ const DoorbellScreen = (props) => {
           role="button"
           mode="contained"
           onPress={() =>
-            mqttClient.publish(
+            globalClient.doorbellClient.publish(
               '18026172/doorbell/deactivate',
               deviceList[0].device_serial_number.toString() +
                 deviceList[0].device_channel.toString(),

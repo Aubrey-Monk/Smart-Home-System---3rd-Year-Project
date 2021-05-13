@@ -15,7 +15,9 @@ import Logout from '../components/logout';
 const Drawer = createDrawerNavigator();
 
 const HomeNavigator = () => {
+  // for non paper components so paper theme colors can be used
   const {colors} = useTheme();
+
   return (
     <Drawer.Navigator
       drawerStyle={{

@@ -13,7 +13,7 @@ const SignupScreen = (props) => {
   const submit = () => {
     try {
       const emailRegexString = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; // to validate email
-      const passwordRegexString = /^\S{5,}$/; // more than 5 chars and no white space
+      const passwordRegexString = /^\S{5,}$/; // to validate password, more than 5 chars and no white space
       const whitespaceRegexString = /^\s+$/; // for stopping the user from entering only whitespace in the firstname and lastname text inputs
 
       // check if name fields are empty or contain whitespace

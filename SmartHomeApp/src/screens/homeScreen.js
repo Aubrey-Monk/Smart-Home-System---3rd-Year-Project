@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import globalStyle from '../styles/globalStyle';
 
 const HomeScreen = (props) => {
-  // for no paper components so paper theme colors can be used
+  // for non paper components so paper theme colors can be used
   const {colors} = useTheme();
 
   return (
@@ -27,7 +27,6 @@ const HomeScreen = (props) => {
           }>
           <Icon name="lightbulb" size={75} color={colors.text} />
         </Button>
-
         <Button
           role="button"
           mode="contained"
@@ -60,7 +59,6 @@ const HomeScreen = (props) => {
           }>
           <Icon name="motion-sensor" size={75} color={colors.text} />
         </Button>
-
         <Button
           role="button"
           mode="contained"

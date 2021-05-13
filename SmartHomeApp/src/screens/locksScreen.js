@@ -5,91 +5,132 @@ import {FlatList} from 'react-native-gesture-handler';
 import {Text, Button, ActivityIndicator, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ListDevices from '../components/listDevices';
+import DeleteDevice from '../components/deleteDevice';
 import MQTTConnection from '../components/mqttClient';
 import globalStyle from '../styles/globalStyle';
 
 const LocksScreen = (props) => {
-  // for no paper components so paper theme colors can be used
-  const {colors} = useTheme();
-
+  const {colors} = useTheme(); // for non paper components so paper theme colors can be used
   const {navigation} = props;
   const [isLoading, setIsLoading] = useState(true);
   const [deviceList, setDeviceList] = useState([]);
   const [mqttClient] = useState(new MQTTConnection());
-  // array used to monitor state of locks
-  const [lockedDoors, setLockedDoors] = useState([]);
+  const [lockedDoors, setLockedDoors] = useState([]); // array used for locks that are current locked
 
-  // lock or unlock a lock depending on state (lockedDoors array)
+  // locks or unlocks a door
   const lockUnlock = (serialNumber) => {
-    if (lockedDoors.indexOf(serialNumber) > -1) {
-      mqttClient.publish('18026172/lock/unlock', serialNumber.toString());
-      setLockedDoors(lockedDoors.filter((item) => item !== serialNumber));
-    } else {
-      mqttClient.publish('18026172/lock/lock', serialNumber.toString());
-      setLockedDoors([...lockedDoors, serialNumber]);
+    try {
+      // checks if lock is already locked or not by checking lockedDoors array
+      if (lockedDoors.indexOf(serialNumber) > -1) {
+        mqttClient.publish('18026172/lock/unlock', serialNumber.toString());
+        // remove lock from lockedDoors array
+        setLockedDoors(lockedDoors.filter((item) => item !== serialNumber));
+      } else {
+        mqttClient.publish('18026172/lock/lock', serialNumber.toString());
+        // add lock to lockedDoors array
+        setLockedDoors([...lockedDoors, serialNumber]);
+      }
+    } catch (e) {
+      ToastAndroid.show('An Unexpected Error Has Occured', ToastAndroid.SHORT);
     }
   };
 
-  // subscribes to the 'checked' topic then publishes a message to client with device serial numbers to check their position, if a message arrives with their position at (0-180) the state is updated, if their position arrives as 1.0 then a device not connected message appears
+  // deletes device from database and device list
+  const deleteDevice = async (deviceId) => {
+    try {
+      await DeleteDevice(deviceId);
+      await getDeviceList();
+    } catch (e) {
+      ToastAndroid.show('An Unexpected Error Has Occured', ToastAndroid.SHORT);
+    }
+  };
+
+  // check the state of each lock
   const checkLocks = useCallback(
     async (data) => {
-      let message = '';
-      // loop through each serial number of returned device list and append to check message, so its ready to be published
-      Object.keys(data).forEach((key) => {
-        message = `${message + data[key].device_serial_number.toString()}-`;
-      });
-
-      const onMessageArrived = (_message) => {
-        // console.log(
-        //   'MQTT Message arrived payloadString: ',
-        //   _message.payloadString,
-        // );
-        const positions = _message.payloadString.split('-');
-        const lockedSerialArray = [];
-        // loop through the received position of each lock
+      try {
+        let message = '';
+        // loop through each lock in list and build message (with serial number) to publish to check state of the lock
         Object.keys(data).forEach((key) => {
-          // console.log(positions[key]);
-          if (positions[key] === '180.0') {
-            // update array to match position of lock
-            lockedSerialArray.push(data[key].device_serial_number);
-            // if lock dosent exists/is disconnected
-          } else if (positions[key] === '1.0') {
-            ToastAndroid.show(
-              `Device with serial number: ${data[key].device_serial_number} is not connected.`,
-              ToastAndroid.SHORT,
-            );
-          }
+          message = `${message + data[key].device_serial_number.toString()}-`;
         });
-        setLockedDoors(lockedSerialArray); // update locked doors state (lockedDoors array)
-        setIsLoading(false);
-      };
-      mqttClient.onMessageArrived = onMessageArrived; // set onMessage arrived callback
-      mqttClient.subscribe('18026172/lock/checked'); // subscribe to 'checked' topic ready for a response
-      mqttClient.publish('18026172/lock/check', message); // publish check message
+
+        // when message arrives with currently locked locks they are pushed to the lockedDoors array
+        const onMessageArrived = (_message) => {
+          const positions = _message.payloadString.split('-');
+          const lockedSerialArray = [];
+
+          // loop through the received position of each lock
+          Object.keys(data).forEach((key) => {
+            if (positions[key] === '180.0') {
+              // if position is 180 the door is locked so it is added to lockedSerialArray array
+              lockedSerialArray.push(data[key].device_serial_number);
+              // if lock dosent exists/is disconnected
+            } else if (positions[key] === '1.0') {
+              ToastAndroid.show(
+                `Device with serial number: ${data[key].device_serial_number} is not connected.`,
+                ToastAndroid.SHORT,
+              );
+            }
+          });
+
+          setLockedDoors(lockedSerialArray); // update lockedDoors array
+          setIsLoading(false);
+        };
+        // set on message arrived callback
+        mqttClient.onMessageArrived = onMessageArrived;
+
+        // subscribe so that when message arrives we receive all currently locked locks
+        mqttClient.subscribe('18026172/lock/checked');
+        // publish message with every locks serial number so the state of the lock can be checked
+        mqttClient.publish('18026172/lock/check', message);
+      } catch (e) {
+        ToastAndroid.show(
+          'An Unexpected Error Has Occured',
+          ToastAndroid.SHORT,
+        );
+      }
     },
     [mqttClient],
   );
 
+  // get list of all locks
   const getDeviceList = useCallback(async () => {
-    const data = await ListDevices('Lock');
-    // if returned data is not empty then set list state and check all locks
-    if (!(typeof data === 'undefined')) {
-      setDeviceList(data);
-      checkLocks(data);
-    } else {
-      setIsLoading(false);
+    try {
+      const data = await ListDevices('Lock');
+      // if returned data is not empty then set list state and check all locks
+      if (!(typeof data === 'undefined')) {
+        setDeviceList([]);
+        setDeviceList(data);
+        checkLocks(data);
+      } else {
+        setDeviceList([]);
+        setIsLoading(false);
+      }
+    } catch (e) {
+      ToastAndroid.show('An Unexpected Error Has Occured', ToastAndroid.SHORT);
     }
   }, [checkLocks]);
 
   // component load
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      const onConnect = async () => {
-        // console.log('MQTT Connected');
-        await getDeviceList();
-      };
-      mqttClient.onConnect = onConnect; // set onConnect callback
-      mqttClient.connect('test.mosquitto.org', 8080); // connect to mqtt broker
+      try {
+        // after a connection is made to the broker a call is made to retrieve all locks from the database
+        const onConnect = async () => {
+          await getDeviceList();
+        };
+        // set on connect callback
+        mqttClient.onConnect = onConnect;
+
+        // connect to mqtt broker
+        mqttClient.connect('test.mosquitto.org', 8080);
+      } catch (e) {
+        ToastAndroid.show(
+          'An Unexpected Error Has Occured',
+          ToastAndroid.SHORT,
+        );
+      }
     });
 
     return unsubscribe;
@@ -97,7 +138,7 @@ const LocksScreen = (props) => {
 
   useEffect(
     () =>
-      // on un-mount
+      // close mqtt connection on un-mount
       () => {
         mqttClient.close(); // disconnects current client when user leaves this screen
       },
@@ -130,9 +171,14 @@ const LocksScreen = (props) => {
                   {`${item.device_room.toString()} ${item.device_name.toString()}`}
                 </Text>
               </View>
-              <View>
+              <View style={{flexDirection: 'row'}}>
                 <Icon
-                  style={globalStyle.flexContainer}
+                  name="delete"
+                  size={40}
+                  color="red"
+                  onPress={() => deleteDevice(item.device_id.toString())}
+                />
+                <Icon
                   name={
                     lockedDoors.indexOf(item.device_serial_number) > -1
                       ? 'lock'
