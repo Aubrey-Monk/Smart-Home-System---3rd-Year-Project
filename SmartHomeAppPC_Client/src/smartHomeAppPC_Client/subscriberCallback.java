@@ -82,11 +82,19 @@ public class subscriberCallback implements MqttCallback {
 		// for motion sensors
 		
 		if(topic.equals("18026172/motion/activate")) {
-			String[] serialChannels = new String(message.getPayload()).split("-");
-			for (int i = 0; i < serialChannels.length; i++) {		
-				motionSensorController.activate(serialChannels[i], mqttClient);
-			}
+			motionSensorController.activate(new String(message.getPayload()), mqttClient);
 		}
-		
+		if(topic.equals("18026172/motion/deactivate")) {
+			motionSensorController.deactivate(new String(message.getPayload()));
+		}
+		if(topic.equals("18026172/motion/check")) {
+			String[] serialChannels = new String(message.getPayload()).split("-");
+			String states = "";
+			for (int i = 0; i < serialChannels.length; i++) {		
+				states += Boolean.toString(motionSensorController.checkSensor(serialChannels[i]))+"-";
+	        }
+			MqttMessage payload = new MqttMessage(states.getBytes());
+			mqttClient.publish("18026172/motion/checked", payload);
+		}
 	}
 }

@@ -15,7 +15,7 @@ const LightsScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [deviceList, setDeviceList] = useState([]);
   const [mqttClient] = useState(new MQTTConnection());
-  const [activeLights, setActiveLights] = useState([]); // array used for lights that are current active
+  const [activeLights, setActiveLights] = useState([]); // array used for lights that are currently active
 
   // turns a light on or off
   const onOff = (serialNumber, channel) => {

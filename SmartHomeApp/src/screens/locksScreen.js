@@ -15,7 +15,7 @@ const LocksScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [deviceList, setDeviceList] = useState([]);
   const [mqttClient] = useState(new MQTTConnection());
-  const [lockedDoors, setLockedDoors] = useState([]); // array used for locks that are current locked
+  const [lockedDoors, setLockedDoors] = useState([]); // array used for locks that are currently locked
 
   // locks or unlocks a door
   const lockUnlock = (serialNumber) => {

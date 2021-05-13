@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
+import {Platform} from 'react-native';
 import {
   NavigationContainer,
   DefaultTheme as NavigationDefaultTheme,
@@ -11,6 +12,7 @@ import {
   Provider as PaperProvider,
 } from 'react-native-paper';
 import {createStackNavigator} from '@react-navigation/stack';
+import PushNotification, {Importance} from 'react-native-push-notification';
 import welcomeStackNavigator from './src/navigators/welcomeStackNavigator';
 import homeDrawerNavigator from './src/navigators/homeDrawerNavigator';
 import homeStackNavigator from './src/navigators/homeStackNavigator';
@@ -19,6 +21,21 @@ import {Context} from './src/components/context';
 const Stack = createStackNavigator();
 
 export default function Main() {
+  PushNotification.createChannel({
+    channelId: 'default-channel',
+    channelName: 'Default channel',
+    channelDescription: 'A default notification channel',
+    playSound: true,
+    soundName: 'default',
+    importance: Importance.HIGH,
+    vibrate: true,
+  });
+
+  PushNotification.configure({
+    popInitialNotification: true,
+    requestPermissions: Platform.OS === 'ios',
+  });
+
   const [isDarkTheme, setIsDarkTheme] = React.useState(false);
 
   const DefaultTheme = {
