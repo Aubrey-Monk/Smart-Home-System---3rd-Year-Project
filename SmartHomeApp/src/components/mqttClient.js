@@ -39,7 +39,6 @@ export default class MQTTConnection {
 
   connect(host, port) {
     const clientID = uuid.v4();
-    // console.log('clientID: ', clientID);
 
     // eslint-disable-next-line no-undef
     this.mqtt = new Paho.MQTT.Client(host, port, clientID);

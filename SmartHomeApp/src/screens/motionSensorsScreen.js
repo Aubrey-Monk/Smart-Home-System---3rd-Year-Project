@@ -66,10 +66,11 @@ const MotionSensorScreen = (props) => {
         }-`;
       });
 
-      // after a connection is made to the broker a call is made to retrieve all locks from the database
+      // after a connection is made to the broker a call is made to retrieve all sensors from the database
       const onConnect = async () => {
-        // when message arrives with active lights they are pushed to the activeLights array
+        // when message arrives with active sensors they are pushed to the activeSensors array
         const onMessageArrived = (_message) => {
+          // if motion is detected create apporiate notification
           if (_message.destinationName === '18026172/motion/motion') {
             Object.keys(data).forEach((key) => {
               if (
@@ -87,19 +88,20 @@ const MotionSensorScreen = (props) => {
                 );
               }
             });
+            // else loop through checked list and push to activeSensors array
           } else {
             const states = _message.payloadString.split('-');
             const activeSerialArray = [];
 
-            // loop through the received state of each light
+            // loop through the received state of each sensor
             Object.keys(data).forEach((key) => {
               if (states[key] === 'true') {
-                // if state is true the light is on so it is added to activeSerialArray array
+                // if state is true the sensor is active so it is added to activeSensors array
                 activeSerialArray.push(
                   data[key].device_serial_number.toString() +
                     data[key].device_channel.toString(),
                 );
-                // if light dosent exists/is disconnected
+                // if sensor dosent exists/is disconnected
               } else if (states[key] === '1.0') {
                 ToastAndroid.show(
                   `Device with serial number: ${data[key].device_serial_number} and Channel number: ${data[key].device_channel}  is not connected.`,
@@ -108,17 +110,17 @@ const MotionSensorScreen = (props) => {
               }
             });
 
-            setActiveSensors(activeSerialArray); // update activeLights array
+            setActiveSensors(activeSerialArray); // update activeSensors array
             setIsLoading(false);
           }
         };
         // set on message arrived callback
         globalStore.motionClient.onMessageArrived = onMessageArrived;
-
+        // subscription for when motion is detected
         globalStore.motionClient.subscribe('18026172/motion/motion');
-        // subscribe so that when message arrives we receive all currently active lights
+        // subscribe so that when message arrives we receive all currently active sensors
         globalStore.motionClient.subscribe('18026172/motion/checked');
-        // publish message with every lights serial number and channel so the state can be checked
+        // publish message with every sensor serial number and channel so the state can be checked
         globalStore.motionClient.publish('18026172/motion/check', message);
       };
       // set on connect callback
@@ -131,11 +133,11 @@ const MotionSensorScreen = (props) => {
     }
   }, []);
 
-  // get list of all locks
+  // get list of all sensors
   const getDeviceList = useCallback(async () => {
     try {
       const data = await ListDevices('Sensor');
-      // if returned data is not empty then set list state and check all locks
+      // if returned data is not empty then set list state and check all sensors
       if (!(typeof data === 'undefined')) {
         setDeviceList([]);
         setDeviceList(data);
@@ -160,10 +162,10 @@ const MotionSensorScreen = (props) => {
           // console.log(e);
         }
 
-        // create mqtt client for doorbell
+        // create mqtt client
         globalStore.motionClient = new MQTTConnection();
 
-        // after a connection is made to the broker a call is made to retrieve all locks from the database
+        // after a connection is made to the broker a call is made to retrieve all sensors from the database
         const onConnect = async () => {
           await getDeviceList();
         };

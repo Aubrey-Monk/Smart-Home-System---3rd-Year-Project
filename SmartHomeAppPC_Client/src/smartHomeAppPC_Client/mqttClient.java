@@ -28,6 +28,7 @@ public class mqttClient {
         } 
     }
     
+    // custom subscribe method to subscribe to multiple topics at once
     public void subscribe(String[] topics) 
     {
         try 
@@ -45,16 +46,4 @@ public class mqttClient {
         }
     }
     
-//    public void publish(String topic, String message) 
-//    {
-//        try 
-//        {
-//	        MqttMessage payload = new MqttMessage(message.getBytes());
-//	        mqttClient.publish(topic, payload);
-//        } 
-//        catch (MqttException e) 
-//        {
-//            e.printStackTrace();
-//        }
-//    }  
 }

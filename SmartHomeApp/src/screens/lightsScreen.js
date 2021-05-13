@@ -59,7 +59,7 @@ const LightsScreen = (props) => {
       try {
         let message = '';
 
-        // loop through each light in list and build message (with serial number and channel of each lock) to publish to check state of the light
+        // loop through each light in list and build message (with serial number and channel of each light) to publish to check state of the light
         Object.keys(data).forEach((key) => {
           message = `${
             message +

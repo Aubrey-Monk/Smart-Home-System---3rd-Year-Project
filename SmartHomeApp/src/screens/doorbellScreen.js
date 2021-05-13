@@ -84,7 +84,7 @@ const DoorbellScreen = (props) => {
           // console.log(e);
         }
 
-        // create mqtt client for doorbell
+        // create mqtt client
         globalStore.doorbellClient = new MQTTConnection();
 
         const onConnect = async () => {
@@ -93,8 +93,8 @@ const DoorbellScreen = (props) => {
             Notification(
               'Someone is at your door!',
               'Doorbell',
-              true,
-              true,
+              false,
+              false,
               'Doorbell is Ringing',
               'Doorbell',
             );

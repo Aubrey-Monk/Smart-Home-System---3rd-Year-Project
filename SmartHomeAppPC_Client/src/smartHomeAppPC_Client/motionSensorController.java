@@ -14,6 +14,8 @@ public class motionSensorController {
 	
 	private static List<VoltageRatioInput> motionSensorList = new ArrayList<VoltageRatioInput>();
 	private static List<String> isActiveList = new ArrayList<String>();
+	private static Double sensorThreshold = 0.5; 
+	private static int sensorPublishDelay = 2000; 
 	
 	public static VoltageRatioInput motionSensorExists(Integer serial, Integer channel) { // check if a motionSensor (of a specific channel and serial) already exists
 		for (int i = 0; i < motionSensorList.size(); i++) {
@@ -22,7 +24,6 @@ public class motionSensorController {
 					return motionSensorList.get(i);
 				}
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
@@ -31,13 +32,13 @@ public class motionSensorController {
 	
 	public static VoltageRatioInput createMotionSensor(Integer serial, Integer channel) { // create a new instance of a motionSensor
 		try {
+			// create new motion sensor, add to list and return
 			VoltageRatioInput motionSensor = new VoltageRatioInput();
 			motionSensor.setDeviceSerialNumber(serial);
 			motionSensor.setChannel(channel);
 			motionSensorList.add(motionSensor);
 			return motionSensor;
 		} catch (PhidgetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;	
@@ -47,11 +48,12 @@ public class motionSensorController {
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		
+		// check if sensor exists
 		VoltageRatioInput sensor = motionSensorExists(serialNumber, channel);
 		if(sensor == null) {
-			return(false);
+			return(false); // if sensor does not exist return false
 		}else {
-			if(isActiveList.contains(serialChannel)) {
+			if(isActiveList.contains(serialChannel)) { // if sensor is contained within the isActive list then return true
 				return(true);
 			}else {
 				return(false);
@@ -59,7 +61,7 @@ public class motionSensorController {
 		}
 	}
 	
-	public static void activate(String serialChannel, MqttClient mqttClient) { // activate a specific motionSensor 
+	public static void activate(String serialChannel, MqttClient mqttClient) { // activate a specific motion sensor 
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		
@@ -68,18 +70,17 @@ public class motionSensorController {
 			VoltageRatioInput newMotionSensor = createMotionSensor(serialNumber, channel);
 			try {
 				newMotionSensor.addSensorChangeListener(new VoltageRatioInputSensorChangeListener() {
+					// uses a check value and a timer to ensure it does not spam publish the motion, it will only publish if check = true
 					Boolean check = true;
 					public void onSensorChange(VoltageRatioInputSensorChangeEvent e) {
 						
-						if((e.getSensorValue() > 0.5 || e.getSensorValue() < -0.5) && check == true) {
+						if((e.getSensorValue() > sensorThreshold || e.getSensorValue() < -sensorThreshold) && check == true) {
 							try {
 								MqttMessage payload = new MqttMessage(serialChannel.getBytes());
 								mqttClient.publish("18026172/motion/motion", payload);
 							} catch (MqttPersistenceException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							} catch (MqttException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 							check = false;
@@ -88,7 +89,7 @@ public class motionSensorController {
 								public void run() {       	
 								check = true;
 								}
-							}, 2000);
+							}, sensorPublishDelay);
 						}
 						
 					}
@@ -96,39 +97,30 @@ public class motionSensorController {
 
 				newMotionSensor.open(5000);
 				newMotionSensor.setSensorType(VoltageRatioSensorType.PN_1111);
-				System.out.println(isActiveList);
 				isActiveList.add(serialNumber.toString()+channel.toString());
-				System.out.println(isActiveList);
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else {
 			try {
 				motionSensor.open(5000);
 				motionSensor.setSensorType(VoltageRatioSensorType.PN_1111);
-				System.out.println(isActiveList);
 				isActiveList.add(serialNumber.toString()+channel.toString());
-				System.out.println(isActiveList);
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public static void deactivate(String serialChannel) { // turn off a specific light 
+	public static void deactivate(String serialChannel) { // deactivate a specific motion sensor 
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
 		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
 		VoltageRatioInput sensor = motionSensorExists(serialNumber, channel);
 		if(!(sensor == null)) {
 			try {
 				sensor.close();
-				System.out.println(isActiveList);
 				isActiveList.remove(serialChannel);
-				System.out.println(isActiveList);
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

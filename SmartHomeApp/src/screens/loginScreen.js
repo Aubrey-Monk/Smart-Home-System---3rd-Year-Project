@@ -14,7 +14,7 @@ const LoginScreen = (props) => {
   const submit = () => {
     try {
       const emailRegexString = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; // to validate email
-      const passwordRegexString = /^\S{5,}$/; // more than 5 chars and no white space
+      const passwordRegexString = /^\S{5,}$/; // to validate password, more than 5 chars and no white space
 
       // check if email is empty and if it matches the regex
       if (email === '' || !emailRegexString.test(email)) {

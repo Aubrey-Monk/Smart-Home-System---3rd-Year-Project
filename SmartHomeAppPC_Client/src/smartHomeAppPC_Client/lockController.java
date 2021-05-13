@@ -10,13 +10,12 @@ public class lockController {
 	private static List<RCServo> lockList = new ArrayList<RCServo>();
 	
 	public static RCServo lockExists(Integer serial) { // check if a lock (of a specific serial number) already exists in the list
-		for (int i = 0; i < lockList.size(); i++) {
+		for (int i = 0; i < lockList.size(); i++) { // loop through list of added locks
             try {
-				if(lockList.get(i).getDeviceSerialNumber() == serial) {
-					return lockList.get(i);
+				if(lockList.get(i).getDeviceSerialNumber() == serial) { // check if serial is the same
+					return lockList.get(i); // if found return the instance of the lock
 				}
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
@@ -25,13 +24,14 @@ public class lockController {
 	
 	public static RCServo createLock(Integer serial) { // create a new lock and add to list
 		try {
+			// create new lock
 			RCServo lock = new RCServo();
 			lock.setDeviceSerialNumber(serial);
 			lock.open(5000);
+			// add new lock to the list
 			lockList.add(lock);
 			return lock;
 		} catch (PhidgetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;	
@@ -42,7 +42,7 @@ public class lockController {
 		if(lock == null) {
 			RCServo newLock = createLock(serial);
 			try {
-				return(newLock.getPosition()); // try to get current position
+				return(newLock.getPosition()); // return current position
 			} catch (PhidgetException e) {
 				try { // see if lock has been reconnected
 					newLock.setTargetPosition(180);
@@ -68,32 +68,35 @@ public class lockController {
 	}
 
 	public static void lock(Integer serial) { // lock a specific lock
-		RCServo lock = lockExists(serial);
+		RCServo lock = lockExists(serial); // set lock to returned lock after checking it exists
+		// if lockExists returns null then create new lock
 		if(lock == null) {
-			RCServo newLock = createLock(serial);
+			RCServo newLock = createLock(serial); 
 			try {
+				// lock the new lock
 				newLock.setTargetPosition(180);
 				newLock.setEngaged(true);
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else {
 			try {
+				// lock the lock
 				lock.setTargetPosition(180);
 				lock.setEngaged(true);
 			} catch (PhidgetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 	
 	public static void unlock(Integer serial) { // unlock a specific lock 
-		RCServo lock = lockExists(serial);
+		RCServo lock = lockExists(serial); // set lock to returned lock after checking it exists
+		// if lockExists returns null then create new lock
 		if(lock == null) {
 			RCServo newLock = createLock(serial);
 			try {
+				// unlock the new lock
 				newLock.setTargetPosition(0);
 				newLock.setEngaged(true);
 			} catch (PhidgetException e) {
@@ -101,6 +104,7 @@ public class lockController {
 			}
 		}else {
 			try {
+				// unlock the lock
 				lock.setTargetPosition(0);
 				lock.setEngaged(true);
 			} catch (PhidgetException e) {

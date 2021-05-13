@@ -17,8 +17,8 @@ pool.query('SELECT 1 + 1 AS solution', (error) => {
   console.log('Successfully connected to the database.');
 });
 
-pool.on('acquire', (connection) => {
-  console.log('Connection %d acquired', connection.threadId);
+pool.on('acquire', () => {
+  // console.log('Connection %d acquired', connection.threadId);
 });
 
 module.exports = pool;

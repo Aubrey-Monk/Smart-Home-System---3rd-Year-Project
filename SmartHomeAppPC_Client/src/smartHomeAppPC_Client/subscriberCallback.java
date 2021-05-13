@@ -9,7 +9,6 @@ public class subscriberCallback implements MqttCallback {
 	
 	// constructor
 	public subscriberCallback(MqttClient mqttClient) {
-		// TODO Auto-generated constructor stub
 		// get instance of client so it can be used for publishing
 		this.mqttClient = mqttClient;
 	}
@@ -40,7 +39,9 @@ public class subscriberCallback implements MqttCallback {
 		if(topic.equals("18026172/lock/check")) {
 			String[] serials = new String(message.getPayload()).split("-");
 			String positions = "";
+			// check state of each lock and append all to a string ready to be published
 			for (int i = 0; i < serials.length; i++) {	
+				// if first time using lock set state to locked (180)
 				if(lockController.checkLock(Integer.parseInt(serials[i])) == 33.1578947368421) {
 					lockController.lock(Integer.parseInt(serials[i]));
 					positions += String.valueOf(180.0)+"-";
@@ -63,6 +64,7 @@ public class subscriberCallback implements MqttCallback {
 		if(topic.equals("18026172/light/check")) {
 			String[] serialChannels = new String(message.getPayload()).split("-");
 			String states = "";
+			// check state of each light and append all to a string ready to be published
 			for (int i = 0; i < serialChannels.length; i++) {		
 				states += Boolean.toString(lightController.checkLight(serialChannels[i]))+"-";
 	        }
@@ -70,7 +72,7 @@ public class subscriberCallback implements MqttCallback {
 			mqttClient.publish("18026172/light/checked", payload);
 		}
 		
-		// for doorbell
+		// for door bell
 		
 		if(topic.equals("18026172/doorbell/activate")) {
 			doorbellController.activate(new String(message.getPayload()), mqttClient);
@@ -90,6 +92,7 @@ public class subscriberCallback implements MqttCallback {
 		if(topic.equals("18026172/motion/check")) {
 			String[] serialChannels = new String(message.getPayload()).split("-");
 			String states = "";
+			// check state of each motion sensor and append all to a string ready to be published
 			for (int i = 0; i < serialChannels.length; i++) {		
 				states += Boolean.toString(motionSensorController.checkSensor(serialChannels[i]))+"-";
 	        }
