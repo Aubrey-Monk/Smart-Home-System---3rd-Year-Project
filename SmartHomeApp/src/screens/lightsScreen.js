@@ -199,6 +199,7 @@ const LightsScreen = (props) => {
                   name="delete"
                   size={40}
                   color="red"
+                  style={{paddingRight: '4%'}}
                   onPress={() => deleteDevice(item.device_id.toString())}
                 />
                 <Icon

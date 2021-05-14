@@ -1,7 +1,8 @@
 import {ToastAndroid} from 'react-native';
+import globalStore from './globalStore';
 
 const Signup = (props, details) =>
-  fetch('http://10.0.2.2:3333/user', {
+  fetch(`http://${globalStore.serverIP}:3333/user`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
