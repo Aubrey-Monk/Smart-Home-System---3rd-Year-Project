@@ -1,10 +1,11 @@
 import {ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import globalStore from './globalStore';
 
 const AddDevice = async (props, params) => {
   const userId = await AsyncStorage.getItem('@user_id');
 
-  fetch('http://192.168.0.15:3333/device/add', {
+  fetch(`http://${globalStore.serverIP}:3333/device/add`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

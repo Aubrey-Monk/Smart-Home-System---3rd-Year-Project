@@ -1,16 +1,20 @@
 import {ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import globalStore from './globalStore';
 
 const ListDevices = async (type) => {
   const id = await AsyncStorage.getItem('@user_id');
 
   // eslint-disable-next-line no-undef
-  return fetch(`http://192.168.0.15:3333/device/list/${type}/${id}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
+  return fetch(
+    `http://${globalStore.serverIP}:3333/device/list/${type}/${id}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-  })
+  )
     .then((response) => {
       if (response.status === 200) {
         return response.json();

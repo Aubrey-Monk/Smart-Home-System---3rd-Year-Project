@@ -1,8 +1,9 @@
 import {ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import globalStore from './globalStore';
 
 const Login = (props, details) =>
-  fetch('http://192.168.0.15:3333/user/login', {
+  fetch(`http://${globalStore.serverIP}:3333/user/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

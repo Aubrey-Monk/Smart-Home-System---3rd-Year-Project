@@ -1,10 +1,11 @@
 import {ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import globalStore from './globalStore';
 
 const Logout = async (props) => {
   const token = await AsyncStorage.getItem('@session_token');
   // eslint-disable-next-line no-undef
-  return fetch('http://192.168.0.15:3333/user/logout', {
+  return fetch(`http://${globalStore.serverIP}:3333/user/logout`, {
     method: 'POST',
     headers: {
       'X-Authorization': token,
