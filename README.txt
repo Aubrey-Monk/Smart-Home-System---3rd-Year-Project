@@ -33,7 +33,8 @@ Next open android studio and open the folder 'SmartHomeApp\android' and let it l
 7) Setting up Android Emulator: Oen the 'AVD Manager' in Android Studio, click 'Create Virtual Device', select a 'Pixel 3 XL' (recommended), select 'API Level 29' (recommended).
 Once emulator is created go into 'AVD Manager' again select the device and choose 'Actions \/ -> Cold Boot Now'.
 
-8) Installing the app on the emulator: With the emulator open and discoverable using command 'adb devices' open a new windows command prompt and change directory to the folder 'SmartHomeApp' and then run the command 'npx react-native run-android'
+8) Installing the app on the emulator: With the emulator open and discoverable using command 'adb devices' open a new windows command prompt and change directory to the folder 'SmartHomeApp' and 
+then run the command 'npx react-native run-android'
 
 *NOTE: FOR BOTH STEP 3A AND STEP 5 I HAVE INCLUDED .bat FILES IN THE INDIVIDUAL DIRECTORIES TO MAKE IT EASIER TO RUN THE CLIENT AND SERVER 
 AS IT WILL AUTOMATICALLY EXECUTE THE REQUIRED COMMAND IN THE DIRECTORY*

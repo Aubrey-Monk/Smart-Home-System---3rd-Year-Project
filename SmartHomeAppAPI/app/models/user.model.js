@@ -75,7 +75,7 @@ class User {
   static async setToken(id, result) {
     try {
       const token = crypto.randomBytes(16).toString('hex');
-      console.log(token);
+      // console.log(token);
       sql.query(
         'UPDATE smarthomeapp_users SET user_token=? WHERE user_id=?',
         [token, id],
