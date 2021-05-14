@@ -35,10 +35,10 @@ public class subscriberCallback implements MqttCallback {
 		if (topic.equals("18026172/lock/lock")) {
 			lockController.lock(Integer.parseInt(new String(message.getPayload())));
 		}
-		if (topic.equals("18026172/lock/unlock")) {
+		else if (topic.equals("18026172/lock/unlock")) {
 			lockController.unlock(Integer.parseInt(new String(message.getPayload())));
 		}
-		if (topic.equals("18026172/lock/check")) {
+		else if (topic.equals("18026172/lock/check")) {
 			String[] serials = new String(message.getPayload()).split("-");
 			String positions = "";
 			// check state of each lock and append all to a string ready to be published
@@ -57,13 +57,13 @@ public class subscriberCallback implements MqttCallback {
 
 		// for lights
 
-		if (topic.equals("18026172/light/on")) {
+		else if (topic.equals("18026172/light/on")) {
 			lightController.on(new String(message.getPayload()));
 		}
-		if (topic.equals("18026172/light/off")) {
+		else if (topic.equals("18026172/light/off")) {
 			lightController.off(new String(message.getPayload()));
 		}
-		if (topic.equals("18026172/light/check")) {
+		else if (topic.equals("18026172/light/check")) {
 			String[] serialChannels = new String(message.getPayload()).split("-");
 			String states = "";
 			// check state of each light and append all to a string ready to be published
@@ -76,22 +76,22 @@ public class subscriberCallback implements MqttCallback {
 
 		// for door bell
 
-		if (topic.equals("18026172/doorbell/activate")) {
+		else if (topic.equals("18026172/doorbell/activate")) {
 			doorbellController.activate(new String(message.getPayload()), mqttClient);
 		}
-		if (topic.equals("18026172/doorbell/deactivate")) {
+		else if (topic.equals("18026172/doorbell/deactivate")) {
 			doorbellController.deactivate(new String(message.getPayload()));
 		}
 
 		// for motion sensors
 
-		if (topic.equals("18026172/motion/activate")) {
+		else if (topic.equals("18026172/motion/activate")) {
 			motionSensorController.activate(new String(message.getPayload()), mqttClient);
 		}
-		if (topic.equals("18026172/motion/deactivate")) {
+		else if (topic.equals("18026172/motion/deactivate")) {
 			motionSensorController.deactivate(new String(message.getPayload()));
 		}
-		if (topic.equals("18026172/motion/check")) {
+		else if (topic.equals("18026172/motion/check")) {
 			String[] serialChannels = new String(message.getPayload()).split("-");
 			String states = "";
 			// check state of each motion sensor and append all to a string ready to be
