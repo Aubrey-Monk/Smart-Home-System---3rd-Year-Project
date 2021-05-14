@@ -2,6 +2,7 @@ import {ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalStore from './globalStore';
 
+// sends post request to API to log in the user
 const Login = (props, details) =>
   fetch(`http://${globalStore.serverIP}:3333/user/login`, {
     method: 'POST',

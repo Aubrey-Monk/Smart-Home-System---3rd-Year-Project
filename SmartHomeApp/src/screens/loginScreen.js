@@ -5,11 +5,8 @@ import Login from '../components/login';
 import globalStyle from '../styles/globalStyle';
 
 const LoginScreen = (props) => {
-  // login details hard coded for rapid testing
-  const [email, setEmail] = useState('aubrey.monk@mail.com');
-  const [password, setPassword] = useState('password123');
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const submit = () => {
     try {

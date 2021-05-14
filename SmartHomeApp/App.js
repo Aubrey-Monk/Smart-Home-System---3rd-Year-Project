@@ -21,6 +21,7 @@ import {Context} from './src/components/context';
 const Stack = createStackNavigator();
 
 export default function Main() {
+  // create channel so push notifications can be sent
   PushNotification.createChannel({
     channelId: 'default-channel',
     channelName: 'Default channel',
@@ -33,10 +34,9 @@ export default function Main() {
 
   PushNotification.configure({
     popInitialNotification: true,
+    // set to IOS due to a bug with firebase
     requestPermissions: Platform.OS === 'ios',
   });
-
-  const [isDarkTheme, setIsDarkTheme] = React.useState(false);
 
   const DefaultTheme = {
     ...NavigationDefaultTheme,
@@ -68,8 +68,9 @@ export default function Main() {
     },
   };
 
+  // used to toggle themes
+  const [isDarkTheme, setIsDarkTheme] = React.useState(false);
   const theme = isDarkTheme ? DarkTheme : DefaultTheme;
-
   const context = React.useMemo(
     () => ({
       toggleTheme: () => {

@@ -8,13 +8,14 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import com.phidget22.*;
 
 public class doorbellController {
-	
+
 	private static VoltageRatioInput bell = null;
 	static Boolean isActive = false;
-	private static Double bellThreshold = 0.0; 
-	private static int bellPublishDelay = 2000; 
-	
-	public static VoltageRatioInput createDoorbell(Integer serial, Integer channel) { // create a new instance of a door bell
+	private static Double bellThreshold = 0.0;
+	private static int bellPublishDelay = 2000;
+
+	public static VoltageRatioInput createDoorbell(Integer serial, Integer channel) { // create a new instance of a door
+																						// bell
 		try {
 			VoltageRatioInput doorbell = new VoltageRatioInput();
 			doorbell.setDeviceSerialNumber(serial);
@@ -24,20 +25,22 @@ public class doorbellController {
 		} catch (PhidgetException e) {
 			e.printStackTrace();
 		}
-		return null;	
+		return null;
 	}
-	
-	public static void activate(String serialChannel, MqttClient mqttClient) { // activate a specific door bell 
+
+	public static void activate(String serialChannel, MqttClient mqttClient) { // activate a specific door bell
 		Integer serialNumber = Integer.parseInt(serialChannel.substring(0, serialChannel.length() - 1));
-		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length()-1));
-		if(bell == null) {
+		Integer channel = Character.getNumericValue(serialChannel.charAt(serialChannel.length() - 1));
+		if (bell == null) {
 			VoltageRatioInput newDoorbell = createDoorbell(serialNumber, channel);
 			try {
 				newDoorbell.addSensorChangeListener(new VoltageRatioInputSensorChangeListener() {
-					// uses a check value and a timer to ensure it does not spam publish the ringing, it will only publish if check = true
+					// uses a check value and a timer to ensure it does not spam publish the
+					// ringing, it will only publish if check = true
 					Boolean check = true;
+
 					public void onSensorChange(VoltageRatioInputSensorChangeEvent e) {
-						if(e.getSensorValue() > bellThreshold && check == true) {
+						if (e.getSensorValue() > bellThreshold && check == true) {
 							try {
 								MqttMessage payload = new MqttMessage("Doorbell ringing".getBytes());
 								mqttClient.publish("18026172/doorbell/ringing", payload);
@@ -49,8 +52,8 @@ public class doorbellController {
 							check = false;
 							new java.util.Timer().schedule(new java.util.TimerTask() {
 								@Override
-								public void run() {       	
-								check = true;
+								public void run() {
+									check = true;
 								}
 							}, bellPublishDelay);
 						}
@@ -64,7 +67,7 @@ public class doorbellController {
 			} catch (PhidgetException e) {
 				e.printStackTrace();
 			}
-		}else {
+		} else {
 			try {
 				bell.open(5000);
 				bell.setSensorType(VoltageRatioSensorType.PN_1106);
@@ -74,9 +77,9 @@ public class doorbellController {
 			}
 		}
 	}
-	
+
 	public static void deactivate(String serialChannel) { // deactivate a specific door bell
-		if(!(bell == null)) {
+		if (!(bell == null)) {
 			try {
 				bell.close();
 				isActive = false;
@@ -85,5 +88,5 @@ public class doorbellController {
 			}
 		}
 	}
-	
+
 }

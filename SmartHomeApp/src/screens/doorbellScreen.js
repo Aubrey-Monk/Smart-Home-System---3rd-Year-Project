@@ -15,7 +15,7 @@ const DoorbellScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDoorbell, setIsDoorbell] = useState(false);
   const [doorbellActive, setDoorbellActive] = useState(true);
-  const [deviceList, setDeviceList] = useState([]);
+  const [device, setDevice] = useState([]);
 
   // activates/deactivates the doorbell
   const activateDeactivate = () => {
@@ -23,15 +23,15 @@ const DoorbellScreen = (props) => {
       if (doorbellActive) {
         globalStore.doorbellClient.publish(
           '18026172/doorbell/deactivate',
-          deviceList[0].device_serial_number.toString() +
-            deviceList[0].device_channel.toString(),
+          device[0].device_serial_number.toString() +
+            device[0].device_channel.toString(),
         );
         setDoorbellActive(false);
       } else if (!doorbellActive) {
         globalStore.doorbellClient.publish(
           '18026172/doorbell/activate',
-          deviceList[0].device_serial_number.toString() +
-            deviceList[0].device_channel.toString(),
+          device[0].device_serial_number.toString() +
+            device[0].device_channel.toString(),
         );
         setDoorbellActive(true);
       }
@@ -40,7 +40,7 @@ const DoorbellScreen = (props) => {
     }
   };
 
-  // deletes device from database and device list
+  // deletes device from database and device state
   const deleteDevice = async (deviceId) => {
     try {
       await DeleteDevice(deviceId);
@@ -50,22 +50,24 @@ const DoorbellScreen = (props) => {
     }
   };
 
-  // gets doorbell and adds to device list
+  // gets doorbell and sets device state
   const getDeviceList = useCallback(async () => {
     try {
       const data = await ListDevices('Doorbell');
-      // if there is a doorbell it gets activated and the device list gets set
+      // if there is a doorbell it gets activated and the device state gets set
       if (!(typeof data === 'undefined')) {
         globalStore.doorbellClient.publish(
           '18026172/doorbell/activate',
           data[0].device_serial_number.toString() +
             data[0].device_channel.toString(),
         );
-        setDeviceList([]);
-        setDeviceList(data);
+        setDevice([]);
+        setDevice(data);
         setIsDoorbell(true);
+
+        // else device state is set to empty and isDoorbell is set to false
       } else {
-        setDeviceList([]);
+        setDevice([]);
         setIsDoorbell(false);
       }
     } catch (e) {
@@ -124,7 +126,7 @@ const DoorbellScreen = (props) => {
     });
 
     return unsubscribe;
-  }, [getDeviceList, navigation, deviceList]);
+  }, [getDeviceList, navigation, device]);
 
   if (isLoading === true) {
     return (
@@ -140,7 +142,7 @@ const DoorbellScreen = (props) => {
           name="delete"
           size={40}
           color="red"
-          onPress={() => deleteDevice(deviceList[0].device_id.toString())}
+          onPress={() => deleteDevice(device[0].device_id.toString())}
           style={styles.deleteButton}
         />
         <Icon

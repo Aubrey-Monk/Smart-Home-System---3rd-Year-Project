@@ -1,5 +1,6 @@
 import PushNotification from 'react-native-push-notification';
 
+// send a push notification
 const LocalNotification = (
   bigText,
   subText,

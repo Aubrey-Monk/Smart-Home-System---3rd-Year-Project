@@ -81,7 +81,7 @@ const LightsScreen = (props) => {
                 data[key].device_serial_number.toString() +
                   data[key].device_channel.toString(),
               );
-              // if light dosent exists/is disconnected
+              // if light dosent exist/is disconnected
             } else if (states[key] === '1.0') {
               ToastAndroid.show(
                 `Device with serial number: ${data[key].device_serial_number} and Channel number: ${data[key].device_channel}  is not connected.`,

@@ -1,6 +1,7 @@
 import {ToastAndroid} from 'react-native';
 import globalStore from './globalStore';
 
+// sends post request to API to addd a new user
 const Signup = (props, details) =>
   fetch(`http://${globalStore.serverIP}:3333/user`, {
     method: 'POST',

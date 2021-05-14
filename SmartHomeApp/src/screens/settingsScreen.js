@@ -5,7 +5,7 @@ import {Context} from '../components/context';
 
 const SettingsScreen = () => {
   const paperTheme = useTheme();
-  const {toggleTheme} = React.useContext(Context); // used to switch to dark mode
+  const {toggleTheme} = React.useContext(Context); // used to switch to toggle the dark mode
 
   return (
     <View>
@@ -16,7 +16,7 @@ const SettingsScreen = () => {
         }}>
         <View style={styles.themeToggleView}>
           <View style={styles.textView}>
-            <Text>Dark Theme</Text>
+            <Text>Dark Mode</Text>
           </View>
           <View pointerEvents="none">
             <Switch role="switch" value={paperTheme.dark} />

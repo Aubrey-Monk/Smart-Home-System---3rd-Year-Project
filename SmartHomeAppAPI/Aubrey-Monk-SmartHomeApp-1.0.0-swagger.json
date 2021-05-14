@@ -1,0 +1,378 @@
+{
+  "openapi" : "3.0.0",
+  "servers" : [ {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/Aubrey-Monk/SmartHomeApp/1.0.0"
+  } ],
+  "info" : {
+    "version" : "1.0.0",
+    "title" : "SmartHomeApp",
+    "description" : "API for Final Year Project: 'Developing an IoT Mobile Application for Controlling and Monitoring a Smart Home Automation System'"
+  },
+  "tags" : [ {
+    "name" : "User Management",
+    "description" : "Operations available for users to manage their accounts"
+  }, {
+    "name" : "Device Management",
+    "description" : "Operations available for users to manage their devices"
+  } ],
+  "paths" : {
+    "/user" : {
+      "post" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Add new user",
+        "operationId" : "addUser",
+        "description" : "Creates a new user and stores in the database. \n\nEmail must be a valid email address and password must be more than 5 characters.\n",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AddUser"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SignUpResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "500" : {
+            "description" : "Server Error"
+          }
+        }
+      }
+    },
+    "/user/login" : {
+      "post" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Log into account",
+        "operationId" : "loginUser",
+        "description" : "Will log a user into their account\n",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LoginUser"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid email/password supplied"
+          },
+          "500" : {
+            "description" : "Server Error"
+          }
+        }
+      }
+    },
+    "/user/logout" : {
+      "post" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Log out of account",
+        "operationId" : "logoutUser",
+        "description" : "Will log a user out of account\n",
+        "security" : [ {
+          "User" : [ ]
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "401" : {
+            "description" : "Unauthorised"
+          },
+          "500" : {
+            "description" : "Server Error"
+          }
+        }
+      }
+    },
+    "/device/add" : {
+      "post" : {
+        "tags" : [ "Device Management" ],
+        "summary" : "Add a device",
+        "operationId" : "addDevice",
+        "description" : "Will add a new device in the system\n",
+        "security" : [ {
+          "User" : [ ]
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AddDevice"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Added"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "500" : {
+            "description" : "Server Error"
+          }
+        }
+      }
+    },
+    "/device/delete/{device_id}" : {
+      "delete" : {
+        "tags" : [ "Device Management" ],
+        "summary" : "Delete a device",
+        "operationId" : "deleteDevice",
+        "description" : "Delete an existing device\n",
+        "security" : [ {
+          "User" : [ ]
+        } ],
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/device_id"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "500" : {
+            "description" : "Server Error"
+          }
+        }
+      }
+    },
+    "/device/list/{device_type}/{usr_id}" : {
+      "get" : {
+        "tags" : [ "Device Management" ],
+        "summary" : "Get device list",
+        "operationId" : "getDevice",
+        "description" : "Retrieve all devices or devices of a certain type\n",
+        "security" : [ {
+          "User" : [ ]
+        } ],
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/device_type"
+        }, {
+          "$ref" : "#/components/parameters/usr_id"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListDevices"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found"
+          },
+          "500" : {
+            "description" : "Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "parameters" : {
+      "usr_id" : {
+        "name" : "usr_id",
+        "in" : "path",
+        "description" : "A unique ID for identifying a certain User",
+        "required" : true,
+        "schema" : {
+          "type" : "integer"
+        }
+      },
+      "device_type" : {
+        "name" : "device_type",
+        "in" : "path",
+        "description" : "A string identifying the type of Device",
+        "required" : true,
+        "schema" : {
+          "type" : "string"
+        }
+      },
+      "device_id" : {
+        "name" : "device_id",
+        "in" : "path",
+        "description" : "A unique ID for identifying a certain Device",
+        "required" : true,
+        "schema" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "schemas" : {
+      "user_id" : {
+        "type" : "integer",
+        "example" : 21
+      },
+      "firstname" : {
+        "type" : "string",
+        "example" : "Aubrey"
+      },
+      "lastname" : {
+        "type" : "string",
+        "example" : "Monk"
+      },
+      "email" : {
+        "type" : "string",
+        "format" : "email",
+        "example" : "aubrey.monk@mail.com"
+      },
+      "password" : {
+        "type" : "string",
+        "example" : "password123"
+      },
+      "session_token" : {
+        "type" : "string",
+        "example" : "e35b4d721603b12e9f2536556eb99abc"
+      },
+      "AddUser" : {
+        "type" : "object",
+        "required" : [ "firstname", "lastname", "email", "password" ],
+        "properties" : {
+          "firstname" : {
+            "$ref" : "#/components/schemas/firstname"
+          },
+          "lastname" : {
+            "$ref" : "#/components/schemas/lastname"
+          },
+          "email" : {
+            "$ref" : "#/components/schemas/email"
+          },
+          "password" : {
+            "$ref" : "#/components/schemas/password"
+          }
+        }
+      },
+      "SignUpResponse" : {
+        "type" : "object",
+        "properties" : {
+          "user_id" : {
+            "$ref" : "#/components/schemas/user_id"
+          }
+        }
+      },
+      "LoginUser" : {
+        "type" : "object",
+        "required" : [ "email", "password" ],
+        "properties" : {
+          "email" : {
+            "$ref" : "#/components/schemas/email"
+          },
+          "password" : {
+            "$ref" : "#/components/schemas/password"
+          }
+        }
+      },
+      "LoginResponse" : {
+        "type" : "object",
+        "properties" : {
+          "user_id" : {
+            "$ref" : "#/components/schemas/user_id"
+          },
+          "session_token" : {
+            "$ref" : "#/components/schemas/session_token"
+          }
+        }
+      },
+      "ListDevices" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/Device"
+        }
+      },
+      "Device" : {
+        "type" : "object",
+        "required" : [ "serial_number", "device_name", "device_type", "device_room" ],
+        "properties" : {
+          "serial_number" : {
+            "$ref" : "#/components/schemas/serial_number"
+          },
+          "device_name" : {
+            "$ref" : "#/components/schemas/device_name"
+          },
+          "device_type" : {
+            "$ref" : "#/components/schemas/device_type"
+          },
+          "device_room" : {
+            "$ref" : "#/components/schemas/device_room"
+          }
+        }
+      },
+      "serial_number" : {
+        "type" : "integer",
+        "example" : 456732
+      },
+      "device_name" : {
+        "type" : "string",
+        "example" : "Light"
+      },
+      "device_type" : {
+        "type" : "string",
+        "example" : "Light"
+      },
+      "device_room" : {
+        "type" : "string",
+        "example" : "Bedroom"
+      },
+      "AddDevice" : {
+        "type" : "object",
+        "required" : [ "serial_number", "device_name", "device_type", "device_room", "user_id" ],
+        "properties" : {
+          "serial_number" : {
+            "$ref" : "#/components/schemas/serial_number"
+          },
+          "device_name" : {
+            "$ref" : "#/components/schemas/device_name"
+          },
+          "device_type" : {
+            "$ref" : "#/components/schemas/device_type"
+          },
+          "device_room" : {
+            "$ref" : "#/components/schemas/device_room"
+          },
+          "user_id" : {
+            "$ref" : "#/components/schemas/user_id"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "User" : {
+        "type" : "apiKey",
+        "name" : "X-Authorization",
+        "in" : "header"
+      }
+    }
+  }
+}

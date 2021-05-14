@@ -1,6 +1,7 @@
 import {ToastAndroid} from 'react-native';
 import globalStore from './globalStore';
 
+// sends delete request to API to delete a device
 const DeleteDevice = async (deviceId) =>
   // eslint-disable-next-line no-undef
   fetch(`http://${globalStore.serverIP}:3333/device/delete/${deviceId}`, {

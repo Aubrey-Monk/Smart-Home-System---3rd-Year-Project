@@ -2,6 +2,7 @@ import {ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalStore from './globalStore';
 
+// sends get request to API list all devices of a certain type
 const ListDevices = async (type) => {
   const id = await AsyncStorage.getItem('@user_id');
 

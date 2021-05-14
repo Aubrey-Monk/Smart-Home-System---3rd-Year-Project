@@ -2,6 +2,7 @@ import {ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalStore from './globalStore';
 
+// sends post request to API to add a device
 const AddDevice = async (props, params) => {
   const userId = await AsyncStorage.getItem('@user_id');
 
