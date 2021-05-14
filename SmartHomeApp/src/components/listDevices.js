@@ -5,7 +5,7 @@ const ListDevices = async (type) => {
   const id = await AsyncStorage.getItem('@user_id');
 
   // eslint-disable-next-line no-undef
-  return fetch(`http://10.0.2.2:3333/device/list/${type}/${id}`, {
+  return fetch(`http://192.168.0.15:3333/device/list/${type}/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

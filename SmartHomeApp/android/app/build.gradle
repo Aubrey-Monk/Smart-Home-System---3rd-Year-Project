@@ -155,10 +155,10 @@ android {
             keyPassword 'android'
         }
 		release {
-			storeFile file('smart_home_app_key.keystore')
+			storeFile file('your_key_name.keystore')
 			storePassword 'password123'
-			keyAlias 'app_keystore'
-			keyPassword 'smart_home_app_keystore'
+			keyAlias 'your_key_alias'
+			keyPassword 'password123'
 		}
     }
     buildTypes {

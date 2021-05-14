@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const AddDevice = async (props, params) => {
   const userId = await AsyncStorage.getItem('@user_id');
 
-  fetch('http://10.0.2.2:3333/device/add', {
+  fetch('http://192.168.0.15:3333/device/add', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

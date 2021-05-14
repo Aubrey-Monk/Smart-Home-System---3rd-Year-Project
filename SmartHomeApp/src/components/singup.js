@@ -1,7 +1,7 @@
 import {ToastAndroid} from 'react-native';
 
 const Signup = (props, details) =>
-  fetch('http://10.0.2.2:3333/user', {
+  fetch('http://192.168.0.15:3333/user', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

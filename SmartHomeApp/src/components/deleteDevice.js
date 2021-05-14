@@ -2,7 +2,7 @@ import {ToastAndroid} from 'react-native';
 
 const DeleteDevice = async (deviceId) =>
   // eslint-disable-next-line no-undef
-  fetch(`http://10.0.2.2:3333/device/delete/${deviceId}`, {
+  fetch(`http://192.168.0.15:3333/device/delete/${deviceId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

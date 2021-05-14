@@ -2,10 +2,11 @@ import {ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = (props, details) =>
-  fetch('http://10.0.2.2:3333/user/login', {
+  fetch('http://192.168.0.15:3333/user/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
     body: JSON.stringify({
       email: details.email,

@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Logout = async (props) => {
   const token = await AsyncStorage.getItem('@session_token');
   // eslint-disable-next-line no-undef
-  return fetch('http://10.0.2.2:3333/user/logout', {
+  return fetch('http://192.168.0.15:3333/user/logout', {
     method: 'POST',
     headers: {
       'X-Authorization': token,
