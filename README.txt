@@ -40,3 +40,4 @@ then run the command 'npx react-native run-android'
 AS IT WILL AUTOMATICALLY EXECUTE THE REQUIRED COMMAND IN THE DIRECTORY*
 
 -Aubrey Monk 18026172-
+https://github.com/Aubrey-Monk/Smart-Home-Application---3rd-Year-Project
