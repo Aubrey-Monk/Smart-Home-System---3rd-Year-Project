@@ -37,11 +37,15 @@ export default class MQTTConnection {
     this.onConnectionLost();
   };
 
-  connect(host, port) {
+  connect() {
     const clientID = uuid.v4();
 
     // eslint-disable-next-line no-undef
-    this.mqtt = new Paho.MQTT.Client(host, port, clientID);
+    this.mqtt = new Paho.MQTT.Client(
+      'broker.mqttdashboard.com',
+      8000,
+      clientID,
+    );
 
     this.mqtt.onConnectionLost = (res) => {
       this.onConnectionLost(res);

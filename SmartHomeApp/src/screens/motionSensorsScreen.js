@@ -128,7 +128,7 @@ const MotionSensorScreen = (props) => {
       globalStore.motionClient.onConnect = onConnect;
 
       // connect to mqtt broker
-      globalStore.motionClient.connect('test.mosquitto.org', 8080);
+      globalStore.motionClient.connect();
     } catch (e) {
       ToastAndroid.show('An Unexpected Error Has Occured', ToastAndroid.SHORT);
     }
@@ -174,7 +174,7 @@ const MotionSensorScreen = (props) => {
         globalStore.motionClient.onConnect = onConnect;
 
         // connect to mqtt broker
-        globalStore.motionClient.connect('test.mosquitto.org', 8080);
+        globalStore.motionClient.connect();
       } catch (e) {
         ToastAndroid.show(
           'An Unexpected Error Has Occured',

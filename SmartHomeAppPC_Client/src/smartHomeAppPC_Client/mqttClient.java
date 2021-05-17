@@ -8,7 +8,7 @@ public class mqttClient {
 
     // client details
     private String clientId = UUID.randomUUID().toString();
-    private String brokerUrl = "ws://test.mosquitto.org:8080";
+    private String brokerUrl = "ws://broker.mqttdashboard.com:8000";
     private static MqttClient mqttClient;
 
     public mqttClient() {

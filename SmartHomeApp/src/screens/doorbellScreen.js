@@ -116,7 +116,7 @@ const DoorbellScreen = (props) => {
         globalStore.doorbellClient.onConnect = onConnect;
 
         // connect to mqtt broker
-        globalStore.doorbellClient.connect('test.mosquitto.org', 8080);
+        globalStore.doorbellClient.connect();
       } catch (e) {
         ToastAndroid.show(
           'An Unexpected Error Has Occured',

@@ -140,8 +140,9 @@ const LightsScreen = (props) => {
         mqttClient.onConnect = onConnect;
 
         // connect to mqtt broker
-        mqttClient.connect('test.mosquitto.org', 8080);
+        mqttClient.connect();
       } catch (e) {
+        console.log(e);
         ToastAndroid.show(
           'An Unexpected Error Has Occured',
           ToastAndroid.SHORT,
