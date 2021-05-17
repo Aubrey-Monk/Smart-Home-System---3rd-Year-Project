@@ -57,6 +57,7 @@ const MotionSensorScreen = (props) => {
   const checkSensors = useCallback(async (data) => {
     try {
       let message = '';
+
       // loop through each sensor in list and build message (with serial number and channel of each sensor) to publish to check state of the sensor
       Object.keys(data).forEach((key) => {
         message = `${

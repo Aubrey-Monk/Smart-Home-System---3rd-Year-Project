@@ -140,7 +140,14 @@ const LocksScreen = (props) => {
     () =>
       // close mqtt connection on un-mount
       () => {
-        mqttClient.close(); // disconnects current client when user leaves this screen
+        try {
+          mqttClient.close(); // disconnects current client when user leaves this screen
+        } catch (e) {
+          ToastAndroid.show(
+            'An Unexpected Error Has Occured',
+            ToastAndroid.SHORT,
+          );
+        }
       },
     [mqttClient],
   );

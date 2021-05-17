@@ -30,7 +30,7 @@ const ListDevices = async (type) => {
       }
     })
     .catch((error) => {
-      ToastAndroid.show(error.toString(), ToastAndroid.SHORT);
+      ToastAndroid.show(error.toString().substring(6), ToastAndroid.SHORT);
     });
 };
 
