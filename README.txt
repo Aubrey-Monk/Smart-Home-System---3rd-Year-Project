@@ -39,5 +39,4 @@ then run the command 'npx react-native run-android'
 *NOTE: FOR BOTH STEP 3A AND STEP 5 I HAVE INCLUDED .bat FILES IN THE INDIVIDUAL DIRECTORIES TO MAKE IT EASIER TO RUN THE CLIENT AND SERVER 
 AS IT WILL AUTOMATICALLY EXECUTE THE REQUIRED COMMAND IN THE DIRECTORY*
 
--Aubrey Monk 18026172-
-https://github.com/Aubrey-Monk/Smart-Home-Application---3rd-Year-Project
+-Aubrey
